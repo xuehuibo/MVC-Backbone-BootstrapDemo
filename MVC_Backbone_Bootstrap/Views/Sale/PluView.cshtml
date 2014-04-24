@@ -1,0 +1,160 @@
+﻿<script type="text/template" id="tempPluList">
+    @*商品列表模板*@
+    <% _.each(pluList,function(plu){ %>
+   <div class="list-group-item media">
+        <div class="list-group-item-body row">
+            <img class="media-object col-xs-3" src="~/Content/images/<%=plu.PluImage%>.jpg">
+            <div class="col-xs-8 col-xs-offset-1">
+                <h4 class="media-heading"><%=plu.PluName%></h4>
+                    <div class="row">
+                        <div class="col-xs-8">
+                        <h4>原价：<span class="label label-default">￥<%=plu.Price%></span></h4>
+                        <h4>现价：<span class="label label-primary">￥<%=plu.FsPrice%></span></h4>
+                        <h4>折扣：<span class="label label-warning">8折</span></h4>
+                        </div>
+                        <div class="btn-group pull-right">
+                                <a class="btn btn-primary ">购买</a>
+                                <a class="btn btn-primary ">改价</a>
+                        </div>
+                </div>
+                <div class="row">
+                    <p><b><%=plu.Brief%></b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% });%>
+</script>
+
+<script type="text/javascript">
+    var router; //行为路由
+    var pluView;
+    var pluList; //商品列表
+    var salePluList; //商品销售列表
+    //#region 声明命名空间
+    if (window.Plu == undefined) {
+        Tools.Namespace.register("window.Plu");
+    }
+    //#endregion
+
+    //#region 声明类型
+
+    //#region 声明PluModel
+    if (window.Plu.PluModel == undefined) {
+        window.Plu.PluModel = Backbone.Model.extend({
+            defaults: {
+                "OrgCode": "",
+                "DepId": "",
+                "DepCode": "",
+                "ShpId": "",
+                "ShpCode": "",
+                "PluId": "",
+                "PluCode": "",
+                "PluName": "",
+                "ExPluCode": "",
+                "BarCode": "",
+                "Unit": "",
+                "Spec": "",
+                "Price": 0,
+                "HyPrice": 0
+            }
+        });
+    }
+    //#endregion
+
+    //#region 声明PluView
+    if (window.Plu.PluView == undefined) {
+        window.Plu.PluView = Backbone.View.extend({
+            tagName: "div",
+            className: "panel panel-info col-xs-9",
+            $typeFilter: null,//类型过滤器
+            $infoFilter: null,//信息过滤器
+            iniatialize: function () {
+                this.$typeFilter = $("#$typeFilter");
+                this.$infoFilter = $("#$infoFilter");
+            },
+            template: _.template($("#tempPluList").html()),
+            render: function (pluList) {
+                this.$el.html(template(pluList.toJSON(pluList)));
+            },
+            events: {
+                "click #btnFilter": "doPluFilter"
+            },
+            doPluFilter: function(){
+                router.navigate("pluFilter", { trigger: true });
+            }
+        });
+    }
+    //#endregion
+
+    //#region   声明分页器
+
+    //#endregion
+    //#region 声明router
+    if (window.Plu.Router == undefined) {
+        window.Plu.Router = Backbone.Router.extend({
+            routes: {
+                "getPluList": "doGetPluList",
+                "showPluList": "doShowPluList",
+                "addPluSale": "doAddPluSale"
+            },
+            doGetPluList: function () {
+                pluList.fetch({ data: { page: 1,pageSize:10} });
+            },
+            doShowPluList: function () {
+            },
+            doAddPluSale: function () {
+            }
+
+        });
+    }
+//#endregion
+
+//#region   初始化对象
+    $(function () {
+        pluList = new window.Plu.PluList(); //商品列表
+        pluView = new window.Plu.PluView({
+            el: "#pluView"
+        });
+        //var salePluList; //商品销售列表
+        router = new window.Plu.Router(); //行为路由
+//        Backbone.history.start();//开启路由
+        router.navigate("getPluList", { trigger: true });
+    });
+    //#endregion
+        //#endregion
+    </script>
+
+<div class="navbar">
+    <ul class="nav navbar-nav">
+            <li id="typeFilter" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">全部商品<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">全部商品</a></li>
+                    <li><a href="#">大码商品</a></li>
+                    <li><a href="#">定价商品</a></li>
+                </ul>
+        </li>        
+    </ul>
+    <div id="infoFilter" class="navbar-form navbar-left">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="条码、编码或品名"/>
+            </div>
+            <a id="btnFilter"class="btn btn-default">过滤</a>
+    </div>   
+</div>
+
+<div id="pluView" class="media-list">
+    <center>
+        <ul class="pagination pull-middle">
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li><a href="#">&raquo;</a></li>
+        </ul>
+    </center>
+            
+</div>

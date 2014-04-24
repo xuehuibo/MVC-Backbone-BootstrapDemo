@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "SaleForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Template{
+}
+
+@section JS{
+<script type="text/javascript">
+    var menuRouter;
+    var menuView;
+    //#region   声明类型
+    if (window.Sale == undefined) {
+        Tools.Namespace.register("window.Sale");
+    }
+    //#region 声明Router
+    if (window.Sale.Router == undefined) {
+        window.Sale.Router = Backbone.Router.extend({
+            routes: {
+                "beginSale": "doBeginSale",
+                "logonVip": "doLogonVip",
+                "pluList": "doShowPluList",
+                "trolley": "doShowTrolley ",//购物车
+                "invoice": "doInvoice",//开票
+                "endSale": "doEndSale"
+            },
+            doBeginSale: function () {
+            },
+            doLogonVip: function () {
+            },
+            doShowPluList: function () {
+                console.info("go");
+                $("#mainPanel").load("/Sale/PluView");
+            },
+            doShowTrolley: function () {
+            },
+            doInvoice: function () {
+            },
+            doEndSale: function () {
+            }
+        });
+    }
+    //#endregion
+
+    if (window.Sale.MenuView == undefined) {
+        window.Sale.MenuView = Backbone.View.extend({
+            el:"#menuList"
+        });
+    }
+
+    $(function () {
+        menuRouter = new window.Sale.Router();
+        Backbone.history.start();
+    });
+    //#endregion
+</script>
+}
+<div class="row">
+    <div class="panel panel-info col-xs-3">
+        <ul id="menuList" class="nav nav-pills nav-stacked" style="padding-right:1px">
+        @*此容器中显示菜单*@
+            @*.nav > li > a:focus  控制按键激活时背景颜色*@
+        <li>
+            <a href="#">开始交易</a>
+        </li>
+        <li>
+             <a href="#">会员信息<span class="badge">未登录</span></a>
+        </li>
+       <li class="active">
+            <a href="#pluList">添加商品</a>
+       </li>
+        <li>
+            <a href="#">购物车<span class="badge">4件</span></a>
+        </li>
+        <li>
+             <a href="#">一维码开票</a>
+        </li>
+        <li>
+            <a href="#">二维码开票</a>
+        </li>
+        <li>
+            <a href="#">完成交易</a>
+        </li> 
+    </ul>
+    </div>
+    
+    <div id="mainPanel" class="panel panel-info col-xs-9">
+       @*在此容器中显示内容*@
+
+    </div>   
+</div>
+

@@ -1,0 +1,5 @@
+D:\GitWork\Web\MVC+Backbone+Bootstrap\Model\bin\Debug\Model.dll
+D:\GitWork\Web\MVC+Backbone+Bootstrap\Model\bin\Debug\Model.pdb
+D:\GitWork\Web\MVC+Backbone+Bootstrap\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
+D:\GitWork\Web\MVC+Backbone+Bootstrap\Model\obj\Debug\Model.dll
+D:\GitWork\Web\MVC+Backbone+Bootstrap\Model\obj\Debug\Model.pdb
