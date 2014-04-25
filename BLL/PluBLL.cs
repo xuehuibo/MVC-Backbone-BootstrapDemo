@@ -17,19 +17,26 @@ namespace BLL
         /// <param name="orgCode">组织代码</param>
         /// <param name="shpId">专柜ID</param>
         /// <returns></returns>
-        public static ICollection<PluModel> GetPluList(string orgCode, int page,int pageSize,string shpId,string ConnecionString)
+        public static ICollection<PluModel> GetPluList(string orgCode,string shpId,int? filterType,string filterValue,string ConnecionString)
         {
             try
             {
                 DataTable dt;
                 using (OracleDAL dal = new OracleDAL(ConnecionString))
                 {
+                    OracleParameter orgCodeParam= new OracleParameter(":OrgCode", orgCode);
+                    OracleParameter shpIdParam=new OracleParameter(":ShpId",shpId);
                     StringBuilder sql = new StringBuilder(256);
-                    sql.Append("Select * from (Select Rownum as SerialNo,A.* From  RvSkuForPad A ");
-                    sql.Append(" Where OrgCode=:OrgCode And ShpId=:ShpId ) ");
-                    sql.AppendFormat(" Where SerialNo Between {0} and {1} ", 
-                        ((page - 1) * pageSize+1).ToString(), (page * pageSize).ToString());
-                    dt = dal.Select(sql.ToString(), new OracleParameter(":OrgCode", orgCode),new OracleParameter(":ShpId",shpId));
+                    sql.Append(" Select * From vSkuForPad ");
+                    sql.Append(" Where OrgCode=:OrgCode And ShpId=:ShpId ");
+                    if (filterType == 1 && !string.IsNullOrEmpty(filterValue))
+                    {
+                        sql.AppendFormat(" And ( PluCode like '%{0}%' ", filterValue);
+                        sql.AppendFormat(" Or BarCode like '%{0}%' ", filterValue);
+                        sql.AppendFormat(" Or PluName like '%{0}%' ) ", filterValue);
+                    }
+                    int i;
+                    dt = dal.Select(sql.ToString(),out i, orgCodeParam,shpIdParam);
                 }
                 ICollection<PluModel> pluList = new List<PluModel>();
                 foreach (DataRow dr in dt.Rows)
@@ -58,5 +65,6 @@ namespace BLL
                 throw;
             }
         }
+
     }
 }

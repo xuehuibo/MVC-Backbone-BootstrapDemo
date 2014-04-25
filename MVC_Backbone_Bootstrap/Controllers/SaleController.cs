@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Model;
+using BLL;
+using System.Configuration;
+using Newtonsoft.Json;
+using ShopSaleForPad.Attribute;
 
 namespace ShopSaleForPad.Controllers
 {
+    [Authorization]
     public class SaleController : Controller
     {
         //
         // GET: /Sale/
-
-        public ActionResult SaleForm()
+        public ViewResult SaleForm()
         {
             return View();
         }

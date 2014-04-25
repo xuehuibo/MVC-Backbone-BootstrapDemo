@@ -7,6 +7,12 @@ namespace Model
 {
     public class UserModel
     {
+        public string OrgCode
+        {
+            get;
+            set;
+        }
+
         public string UserID
         {
             get;

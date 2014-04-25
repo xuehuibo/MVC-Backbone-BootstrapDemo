@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.SessionState;
 
 namespace ShopSaleForPad
 {
@@ -22,6 +23,22 @@ namespace ShopSaleForPad
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles); 
+        }
+
+        public override void Init()
+        {
+            this.PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            base.Init();
+        }
+
+        /// <summary>
+        /// 设置WebApi允许访问Session
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
+        {
+            System.Web.HttpContext.Current.SetSessionStateBehavior(SessionStateBehavior.Required);
         }
     }
 }

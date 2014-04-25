@@ -86,5 +86,25 @@ namespace Model
             get;
             set;
         }
+
+        private string pluImage;
+        public string PluImage
+        {
+            set
+            {
+                pluImage = value;
+            }
+            get
+            {
+                if (string.IsNullOrEmpty(pluImage))
+                {
+                    return "default";
+                }
+                else
+                {
+                    return pluImage;
+                }
+            }
+        }
     }
 }

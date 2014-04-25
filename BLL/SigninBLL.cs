@@ -22,6 +22,7 @@ namespace BLL
             try{
                 using (OracleDAL dal = new OracleDAL(connectionStr))
                 {
+                    int i;
                     DataTable dt =
                         dal.Select(" Select  UserId,UserCode,UserName,ShpId,ShpCode,ShpName "
                                 + " From tUsrUser A "
@@ -29,7 +30,7 @@ namespace BLL
                                 + " And ShpCode=:ShopCode "
                                 + " And Exists(Select 1 From tShpShoppe Where ShpId=A.ShpId And IsActive='1'And OrgCode=:OrgCode) "
                                 + " And IsActive='1' "
-                                + " And UserCode=:UserCode ",
+                                + " And UserCode=:UserCode ",out i,
                             new OracleParameter(":UserCode", signModel.UserCode),
                             new OracleParameter(":ShopCode", signModel.ShopCode),
                             new OracleParameter(":OrgCode", orgCode));
@@ -37,6 +38,7 @@ namespace BLL
                     {
                         return new UserModel()
                         {
+                            OrgCode=orgCode,
                             UserID = Convert.ToString(dt.Rows[0]["UserId"]),
                             UserCode = Convert.ToString(dt.Rows[0]["UserCode"]),
                             UserName = Convert.ToString(dt.Rows[0]["UserName"]),

@@ -7,7 +7,7 @@ using Model;
 using BLL;
 using System.Configuration;
 using Newtonsoft.Json;
-using ShopSaleForPad.Filters;
+using ShopSaleForPad.Attribute;
 
 namespace ShopSaleForPad.Controllers
 {
@@ -21,10 +21,11 @@ namespace ShopSaleForPad.Controllers
         {
             return View();
         }
+
         [AllowAnonymous]
-        public ViewResult Logon()
+        public PartialViewResult Logon()
         {
-            return View();
+            return new PartialViewResult();
         }
         /// <summary>
         /// 登录

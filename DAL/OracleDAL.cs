@@ -47,7 +47,7 @@ namespace DAL
         /// </summary>
         /// <param name="sqlString">sql语句</param>
         /// <returns></returns>
-        public DataTable Select(string sqlString)
+        public DataTable Select(string sqlString,out int i)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace DAL
                 //cmd.Transaction = tran;
                 OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                i=adapter.Fill(dataTable);
                 //tran.Commit();
                 return dataTable;
             }
@@ -66,7 +66,7 @@ namespace DAL
             }
         }
 
-        public DataTable Select(string sqlString, OracleTransaction tran)
+        public DataTable Select(string sqlString, OracleTransaction tran,out int i)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace DAL
                 cmd.Transaction = tran;
                 OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                i=adapter.Fill(dataTable);
                 return dataTable;
             }
             catch
@@ -82,6 +82,7 @@ namespace DAL
                 throw;
             }
         }
+
         /// <summary>
         /// 查询
         /// create by xuehuibo 2014-03-21
@@ -89,7 +90,7 @@ namespace DAL
         /// <param name="sqlString">sql语句</param>
         /// <param name="paramCollection">参数集合</param>
         /// <returns></returns>
-        public DataTable Select(string sqlString, params OracleParameter[] paramArray)
+        public DataTable Select(string sqlString,out int i, params OracleParameter[] paramArray)
         {
             try
             {
@@ -99,7 +100,7 @@ namespace DAL
                 //cmd.Transaction = tran;
                 OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                i=adapter.Fill(dataTable);
                 //tran.Commit();
                 return dataTable;
             }
@@ -109,7 +110,7 @@ namespace DAL
             }
         }
 
-        public DataTable Select(string sqlString, OracleTransaction tran,params OracleParameter[] paramArray)
+        public DataTable Select(string sqlString, OracleTransaction tran,out int i,params OracleParameter[] paramArray)
         {
             try
             {
@@ -118,8 +119,50 @@ namespace DAL
                 cmd.Transaction = tran;
                 OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                 DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                i=adapter.Fill(dataTable);
                 return dataTable;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public OracleDataReader Select(string sqlString)
+        {
+            try
+            {
+                OracleCommand cmd = new OracleCommand(sqlString, Connection);
+                return cmd.ExecuteReader();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public OracleDataReader Select(string sqlString, params OracleParameter[] paramArray)
+        {
+            try
+            {
+                OracleCommand cmd = new OracleCommand(sqlString, Connection);
+                cmd.Parameters.AddRange(paramArray);
+                return cmd.ExecuteReader();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public OracleDataReader Select(string sqlString, OracleTransaction tran, params OracleParameter[] paramArray)
+        {
+            try
+            {
+                OracleCommand cmd = new OracleCommand(sqlString, Connection);
+                cmd.Transaction = tran;
+                cmd.Parameters.AddRange(paramArray);
+                return cmd.ExecuteReader();
             }
             catch
             {

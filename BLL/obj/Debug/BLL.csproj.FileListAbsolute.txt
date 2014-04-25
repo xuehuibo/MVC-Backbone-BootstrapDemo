@@ -7,3 +7,12 @@ D:\GitWork\Web\MVC+Backbone+Bootstrap\BLL\bin\Debug\Model.pdb
 D:\GitWork\Web\MVC+Backbone+Bootstrap\BLL\obj\Debug\BLL.csprojResolveAssemblyReference.cache
 D:\GitWork\Web\MVC+Backbone+Bootstrap\BLL\obj\Debug\BLL.dll
 D:\GitWork\Web\MVC+Backbone+Bootstrap\BLL\obj\Debug\BLL.pdb
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\BLL.dll
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\BLL.pdb
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\DAL.dll
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\Model.dll
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\DAL.pdb
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\bin\Debug\Model.pdb
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\obj\Debug\BLL.csprojResolveAssemblyReference.cache
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\obj\Debug\BLL.dll
+D:\GitWork\Web\MVC-Backbone-BootstrapDemo\BLL\obj\Debug\BLL.pdb

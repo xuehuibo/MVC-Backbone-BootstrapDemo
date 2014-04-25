@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace ShopSaleForPad.Filters
+namespace ShopSaleForPad.Attribute
 {
     /// <summary>
     /// 表示需要用户登录才可以使用的特性
