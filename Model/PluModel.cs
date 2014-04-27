@@ -6,7 +6,7 @@ using System.Text;
 namespace Model
 {
     /// <summary>
-    /// 商品模板
+    /// 商品模板 
     /// </summary>
     public class PluModel
     {
