@@ -12,17 +12,23 @@
     <File Include="bin/Antlr3.Runtime.dll">
       <publishTime>04/11/2014 08:23:11</publishTime>
     </File>
+    <File Include="bin/App_global.asax.compiled">
+      <publishTime>04/29/2014 14:55:24</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.dll">
+      <publishTime>04/29/2014 14:55:24</publishTime>
+    </File>
     <File Include="bin/BLL.dll">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:06</publishTime>
     </File>
     <File Include="bin/BLL.pdb">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:06</publishTime>
     </File>
     <File Include="bin/DAL.dll">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:05</publishTime>
     </File>
     <File Include="bin/DAL.pdb">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:05</publishTime>
     </File>
     <File Include="bin/EntityFramework.dll">
       <publishTime>04/11/2014 08:23:09</publishTime>
@@ -34,19 +40,19 @@
       <publishTime>04/11/2014 08:23:09</publishTime>
     </File>
     <File Include="bin/Model.dll">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:05</publishTime>
     </File>
     <File Include="bin/Model.pdb">
-      <publishTime>04/25/2014 17:11:44</publishTime>
+      <publishTime>04/29/2014 16:52:05</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
       <publishTime>04/11/2014 08:23:13</publishTime>
     </File>
     <File Include="bin/ShopSaleForPad.dll">
-      <publishTime>04/25/2014 17:11:46</publishTime>
+      <publishTime>04/29/2014 17:14:05</publishTime>
     </File>
     <File Include="bin/ShopSaleForPad.pdb">
-      <publishTime>04/25/2014 17:11:46</publishTime>
+      <publishTime>04/29/2014 17:14:05</publishTime>
     </File>
     <File Include="bin/System.Net.Http.dll">
       <publishTime>04/11/2014 08:23:08</publishTime>
@@ -126,6 +132,12 @@
     <File Include="bin/zh-Hans/System.Web.WebPages.resources.dll">
       <publishTime>04/11/2014 08:23:10</publishTime>
     </File>
+    <File Include="Content/css/bootstrap-switch.css">
+      <publishTime>04/29/2014 09:34:55</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-switch.min.css">
+      <publishTime>04/29/2014 09:34:55</publishTime>
+    </File>
     <File Include="Content/css/bootstrap-theme.css">
       <publishTime>04/11/2014 08:23:07</publishTime>
     </File>
@@ -152,6 +164,9 @@
     </File>
     <File Include="Content/images/Background.jpg">
       <publishTime>04/14/2014 13:03:43</publishTime>
+    </File>
+    <File Include="Content/images/default.jpg">
+      <publishTime>04/25/2014 17:20:14</publishTime>
     </File>
     <File Include="Content/images/ldj.jpg">
       <publishTime>04/14/2014 17:32:02</publishTime>
@@ -186,11 +201,20 @@
     <File Include="packages.config">
       <publishTime>04/11/2014 08:23:07</publishTime>
     </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>04/29/2014 14:55:22</publishTime>
+    </File>
     <File Include="Scripts/Backbone/backbone-min.js">
       <publishTime>04/11/2014 08:23:02</publishTime>
     </File>
     <File Include="Scripts/Backbone/backbone.js">
       <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap-switch.js">
+      <publishTime>04/29/2014 09:35:39</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap-switch.min.js">
+      <publishTime>04/29/2014 09:35:39</publishTime>
     </File>
     <File Include="Scripts/Bootstrap/bootstrap.js">
       <publishTime>04/11/2014 08:23:02</publishTime>
@@ -223,19 +247,25 @@
       <publishTime>04/15/2014 14:19:49</publishTime>
     </File>
     <File Include="Views/Home/Logon.cshtml">
-      <publishTime>04/25/2014 09:13:48</publishTime>
+      <publishTime>04/29/2014 12:09:24</publishTime>
+    </File>
+    <File Include="Views/Sale/LogonVip.cshtml">
+      <publishTime>04/29/2014 17:01:22</publishTime>
+    </File>
+    <File Include="Views/Sale/PluList.cshtml">
+      <publishTime>04/30/2014 10:04:58</publishTime>
     </File>
     <File Include="Views/Sale/PluView.cshtml">
-      <publishTime>04/25/2014 17:08:15</publishTime>
+      <publishTime>04/28/2014 16:01:48</publishTime>
     </File>
     <File Include="Views/Sale/SaleForm.cshtml">
-      <publishTime>04/25/2014 16:57:53</publishTime>
+      <publishTime>04/30/2014 10:08:57</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>04/11/2014 08:23:03</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>04/25/2014 16:26:43</publishTime>
+      <publishTime>04/29/2014 14:41:22</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/11/2014 08:23:03</publishTime>
@@ -244,7 +274,7 @@
       <publishTime>04/11/2014 08:23:03</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/25/2014 17:11:53</publishTime>
+      <publishTime>04/29/2014 16:52:11</publishTime>
     </File>
   </ItemGroup>
 </Project>

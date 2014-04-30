@@ -21,7 +21,7 @@ namespace ShopSaleForPad.Controllers
             return View();
         }
 
-        public PartialViewResult PluView()
+        public PartialViewResult PluList()
         {
             return new PartialViewResult();
         }

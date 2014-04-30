@@ -1,92 +1,212 @@
 ﻿@{
-    ViewBag.Title = "SaleForm";
+    ViewBag.Title = "开票";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Template{
+
+    <script id="menuView" type="text/template">
+        <li>
+            <a href="#">开始交易</a>
+        </li>
+        <li>
+             <a href="#logonVip">会员信息<span class="badge">未登录</span></a>
+        </li>
+       <li >
+            <a href="#showPluList">添加商品</a>
+       </li>
+        <li>
+            <a href="#showSale">购物车<span class="badge">4件</span></a>
+        </li>
+        <li>
+             <a href="#yiwei">一维码开票</a>
+        </li>
+        <li>
+            <a href="#erwei">二维码开票</a>
+        </li>
+        <li>
+            <a href="#finish">结束交易</a>
+        </li> 
+    </script>
 }
 
 @section JS{
-<script type="text/javascript">
-    var menuRouter;
-    var menuView;
-    //#region   声明类型
-    if (window.Sale == undefined) {
-        Tools.Namespace.register("window.Sale");
-    }
-    //#region 声明Router
-    if (window.Sale.Router == undefined) {
-        window.Sale.Router = Backbone.Router.extend({
-            routes: {
-                "beginSale": "doBeginSale",
-                "logonVip": "doLogonVip",
-                "pluList": "doShowPluList",
-                "trolley": "doShowTrolley ",//购物车
-                "invoice": "doInvoice",//开票
-                "endSale": "doEndSale"
-            },
-            doBeginSale: function () {
-            },
-            doLogonVip: function () {
-            },
-            doShowPluList: function () {
-                console.info("go");
-                $("#mainPanel").load("/Sale/PluView");
-            },
-            doShowTrolley: function () {
-            },
-            doInvoice: function () {
-            },
-            doEndSale: function () {
+
+
+    <script type="text/javascript">
+        if (window.Sale == undefined) {
+                Tools.Namespace.register("window.Sale");
             }
-        });
-    }
-    //#endregion
+            
+        //#region 声明MenuView
+        if (window.Sale.MenuView == undefined) {
+            window.Sale.MenuView = Backbone.View.extend({
+                events: {
+                    "click li":"doClick"
+                },
+                doClick: function (e) {
+                    //console.info($(this));
+                    this.$el.children().removeClass("active");
+                    if (!$(e.currentTarget).hasClass("disabled")) {
+                        $(e.currentTarget).addClass("active");
+                    }
+                },
+                closeTrade: function () {
+                    //初始化交易界面
+                    this.$el.children().addClass("disabled");
+                    this.$el.children().removeClass("active");
+                    this.$el.children().first("li").removeClass("disabled");
+                },
+                openTrade: function () {
+                    this.$el.children().removeClass("disabled");
+                    this.$el.children().removeClass("active");
+                    this.$el.children().first("li").addClass("disabled");
+                }
+            });
+        }
+        //#endregion
 
-    if (window.Sale.MenuView == undefined) {
-        window.Sale.MenuView = Backbone.View.extend({
-            el:"#menuList"
-        });
-    }
+        //#region 声明SaleModel
+            if (window.Sale.SalePluModel == undefined) {
+                window.Sale.SalePluModel = Backbone.Model.extend({
+                    defaults: {
+                        "PadSaleNo": 0,
+                        "OrgCode": "",
+                        "LnNo": 1,
+                        "PluId": 0,
+                        "PluCode": "",
+                        "PluName": "",
+                        "Price": 0,
+                        "HyPrice": 0,
+                        "FsPrice": 0,
+                        "XsCount": 0,
+                        "XsTotal": 0,
+                        "DisCountOff": 0,
+                        "Remark": ""
+                    }
+                });
+            }
 
-    $(function () {
-        menuRouter = new window.Sale.Router();
-        Backbone.history.start();
-    });
-    //#endregion
-</script>
+            if (window.Sale.SaleModel == undefined) {
+                window.Sale.SaleModel == Backbone.Model.extend({
+                    defaults: {
+                        "PadSaleNo": 0,
+                        "OrgCode": "",
+                        "ShpId": 0,
+                        "ShpCode": "",
+                        "ShpName": "",
+                        "ClerkId": 0,
+                        "ClerkCode": "",
+                        "ClerkName": "",
+                        "BuildDate": "",
+                        "VipCardNo": "",
+                        "XsTotal": 0,
+                        "NeedPayTotal": 0,
+                        "PayStatus": "0",
+                        "PosPayTotal": 0,
+                        "IsTook": "0",
+                        "SaleSource": "0",
+                        "SalePluList": []
+                    }
+                });
+            }
+            //#endregion
+
+        //#region 声明SalePluList
+            if (window.Sale.SalePluList == undefined) {
+                window.Sale.SalePluList = Backbone.Collection.extend({
+                    model: window.Sale.SalePluModel
+                });
+            }
+            //#endregion
+
+        //#region 声明Router
+            if (window.Sale.Router == undefined) {
+                window.Sale.Router = Backbone.Router.extend({
+                    routes: {
+                        "":"doIniatialize",
+                        "beginSale": "doBeginSale",
+                        "logonVip": "doLogonVip",
+                        "trolley": "doShowTrolley ",//购物车
+                        "invoice": "doInvoice",//开票
+                        "endSale": "doEndSale",
+                        "showPluList": "doShowPluList",
+                        "sale/:index": "doSale",
+                        "goToPage/:page":"goToPage"
+                    },
+                    doIniatialize: function () {
+                        //初始化界面
+                        menuView.closeTrade();
+                    },
+                    doBeginSale: function () {
+                        menuView.openTrade();
+                    },
+                    doLogonVip: function () {
+                    },
+                    doShowPluList: function () {
+                        $("#mainPanel").load("/Sale/PluList");
+                    },
+                    doShowTrolley: function () {
+                    },
+                    doInvoice: function () {
+                    },
+                    doEndSale: function () {
+                    },
+                    doSale: function (id) {
+                        console.info("sale-" + id);
+                    },
+                    goToPage: function (page) {
+                        pluView.goToPage(page);
+                    }
+                });
+            }
+            //#endregion
+
+    </script>
+
+    <script type="text/javascript">
+        var router;
+        var menuView;
+        var salePluList;//销售闪频流水
+        $(function () {
+            menuView = new window.Sale.MenuView({
+                el: "#menuList"
+            });
+            router = new window.Sale.Router();
+            Backbone.history.start();
+        })
+        </script>
 }
 <div class="row">
     <div class="panel panel-info col-xs-3">
         <ul id="menuList" class="nav nav-pills nav-stacked" style="padding-right:1px">
         @*此容器中显示菜单*@
             @*.nav > li > a:focus  控制按键激活时背景颜色*@
-        <li>
-            <a href="#">开始交易</a>
-        </li>
-        <li>
-             <a href="#">会员信息<span class="badge">未登录</span></a>
-        </li>
-       <li >
-            <a href="#pluList">添加商品</a>
-       </li>
-        <li>
-            <a href="#">购物车<span class="badge">4件</span></a>
-        </li>
-        <li>
-             <a href="#">一维码开票</a>
-        </li>
-        <li>
-            <a href="#">二维码开票</a>
-        </li>
-        <li>
-            <a href="#">完成交易</a>
-        </li> 
-    </ul>
+            <li class="disabled">
+                <a href="#beginSale" >开始交易</a>
+            </li>
+            <li class="active">
+                 <a href="#logonVip">会员信息<span class="badge">未登录</span></a>
+            </li>
+           <li >
+                <a href="#showPluList">添加商品</a>
+           </li>
+            <li>
+                <a href="#showSale">购物清单<span class="badge">4件</span></a>
+            </li>
+            <li>
+                 <a href="#yiwei">一维开票</a>
+            </li>
+            <li>
+                <a href="#erwei">二维开票</a>
+            </li>
+            <li>
+                <a href="#finish">结束交易</a>
+            </li> 
+        </ul>
     </div>
     
     <div id="mainPanel" class="panel panel-info col-xs-9">
        @*在此容器中显示内容*@
-
     </div>   
 </div>
 

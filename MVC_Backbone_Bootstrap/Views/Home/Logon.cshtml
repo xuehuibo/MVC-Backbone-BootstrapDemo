@@ -6,7 +6,7 @@
     <script type="text/template" id="tempSignin">
         <div class="input-group">
             <span class="input-group-addon">专柜编码</span>
-            <input id="txtShopCode" type="text" class="form-control" placeHolder="专柜编码" value="<%=ShopCode%>">      
+            <input id="txtShopCode" type="text" autofocus="autofocus" class="form-control" placeHolder="专柜编码" value="<%=ShopCode%>">      
         </div>
         <div class="input-group">
             <span class="input-group-addon">柜员编码</span>
@@ -16,9 +16,14 @@
             <a id="btnSignin" class="btn btn-default" data-loading-text="正在登录..."  href="#">登 录</a>
             <a id="btnClear" class="btn btn-default" href="#">清 空</a>
         </div>
+         <div class="checkbox">
+            <label>
+              <input id="rememberPwd" name="remember" type="checkbox"><h4><span class="label label-default">记住我</span> </h4>
+            </label>
+          </div>
         <div id="progressBar" class="progress progress-striped active hide">
           <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-            <span class="sr-only">45% Complete</span>
+            <span class="sr-only">99% Complete</span>
           </div>
         </div>
     </script>
@@ -95,6 +100,12 @@
                     this.render();//渲染View
                     this.$txtShopCode = $("#txtShopCode");
                     this.$txtUserCode = $("#txtUserCode");
+                    var user =JSON.parse(window.localStorage.getItem("user"));
+                    if (user != null) {
+                        this.$txtShopCode.val(user.ShopCode);
+                        this.$txtUserCode.val(user.UserCode);
+                        document.getElementById("rememberPwd").checked = true;
+                    }
                 },
 
                 template: _.template($("#tempSignin").html()),//render用此模板渲染
@@ -130,9 +141,6 @@
                     "progress/:id": "doProgress",//设置进度条
                     "clear": "doClear"//清空
                 },
-                //iniatilize: function () {
-                //    console.info("router启动");
-                //},
                 doSigin: function () {
                     //点击登录
                     signinModel.set({
@@ -143,7 +151,6 @@
                         infoView.render(signinModel.validationError);
                     }
                     else {
-                        console.info("dosigin");
                         infoView.$el.addClass("hide");//隐藏消息标签
                         $("#progressBar").removeClass("hide");//显示滚动条
                         $("#btnSignin").button("loading");//改变按钮状态
@@ -154,6 +161,10 @@
                             $("#btnClear").removeClass("disabled");
                             if (data.Rst == 1) {
                                 //登录成功
+                                window.localStorage.removeItem("user");
+                                if (document.getElementById("rememberPwd").checked) {
+                                    window.localStorage.setItem("user", JSON.stringify(signinModel.toJSON(signinModel)));
+                                }
                                 self.location = "/Home/Index";
                             }
                             else if (data.Rst == -1) {

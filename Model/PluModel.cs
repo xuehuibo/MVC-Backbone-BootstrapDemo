@@ -15,7 +15,7 @@ namespace Model
             get;
             set;
         }
-        public string DepId
+        public decimal DepId
         {
             get;
             set;
@@ -27,7 +27,7 @@ namespace Model
             set;
         }
 
-        public string ShpId
+        public decimal ShpId
         {
             get;
             set;
@@ -39,7 +39,7 @@ namespace Model
             set;
         }
 
-        public string PluId
+        public decimal PluId
         {
             get;
             set;

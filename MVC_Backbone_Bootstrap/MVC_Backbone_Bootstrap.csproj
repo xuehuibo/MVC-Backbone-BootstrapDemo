@@ -133,6 +133,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PluApiController.cs" />
+    <Compile Include="Controllers\SaleApiController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Filters\ActionFilter.cs" />
     <Compile Include="Attribute\AuthorizationAttribute.cs" />
@@ -143,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\Background.jpg" />
+    <Content Include="Content\images\default.jpg" />
     <Content Include="Content\images\ldj.jpg" />
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\MenuRow1Func1.jpg" />
@@ -212,10 +214,9 @@
     <Content Include="Views\Sale\SaleForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Sale\PluView.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\PublishProfiles\PadSale.pubxml" />
+    <Content Include="Views\Sale\PluList.cshtml" />
+    <Content Include="Views\Sale\LogonVip.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

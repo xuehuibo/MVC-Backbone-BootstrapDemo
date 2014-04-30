@@ -33,7 +33,7 @@ namespace BLL
                     {
                         sql.AppendFormat(" And ( PluCode like '%{0}%' ", filterValue);
                         sql.AppendFormat(" Or BarCode like '%{0}%' ", filterValue);
-                        sql.AppendFormat(" Or PluName like '%{0}%' ) ", filterValue);
+                        sql.AppendFormat(" Or Upper(PluName) like '%{0}%' ) ", filterValue.ToUpper());
                     }
                     int i;
                     dt = dal.Select(sql.ToString(),out i, orgCodeParam,shpIdParam);
@@ -44,11 +44,11 @@ namespace BLL
                     pluList.Add(new PluModel()
                     {
                         OrgCode = Convert.ToString(dr["OrgCode"]),
-                        DepId = Convert.ToString(dr["DepId"]),
+                        DepId = Convert.ToDecimal(dr["DepId"]),
                         DepCode = Convert.ToString(dr["DepCode"]),
-                        ShpId = Convert.ToString(dr["ShpId"]),
+                        ShpId = Convert.ToDecimal(dr["ShpId"]),
                         ShpCode = Convert.ToString(dr["ShpCode"]),
-                        PluId = Convert.ToString(dr["PluId"]),
+                        PluId = Convert.ToDecimal(dr["PluId"]),
                         PluCode = Convert.ToString(dr["PluCode"]),
                         PluName = Convert.ToString(dr["PluName"]),
                         BarCode = Convert.ToString(dr["BarCode"]),

@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PadSale.cs" />
+    <Compile Include="PadSalePay.cs" />
+    <Compile Include="PadSalePlu.cs" />
     <Compile Include="PluModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultModel.cs" />
