@@ -320,7 +320,7 @@ textarea {
 }
 
 a {
-  color: #000;
+  color: #428bca;
   text-decoration: none;
 }
 
@@ -4107,7 +4107,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: rgba(102, 175, 233, 0.6);
+  background-color: #eeeeee;
 }
 
 .nav > li.disabled > a {

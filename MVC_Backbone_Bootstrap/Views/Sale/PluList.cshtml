@@ -6,71 +6,28 @@
             <img class="media-object col-xs-3" src="../Content/images/<%=pluList[i].PluImage%>.jpg">
             <div class="col-xs-8 col-xs-offset-1">
                 <h4 class="media-heading"><%=pluList[i].PluCode+' - '+pluList[i].PluName+'&nbsp;&nbsp;条码:'+pluList[i].BarCode%></h4>
-                 <% if(pluList[i].Price!=0) {%>
                 <div class="row">
                     <div class="col-xs-6">
-                        <h4>原价：<span class="label label-default">￥<%=pluList[i].Price%></span></h4>
-                        <h4>现价：<span class="label label-primary">￥<%=pluList[i].FsPrice==undefined?pluList[i].Price:pluList[i].FsPrice%></span></h4>
-                        <h4>折扣：<span class="label label-warning"><%=pluList[i].Dsc==undefined?100:pluList[i].FsPrice%>%</span></h4>
+                        <h4>原售价：<span class="label label-primary">￥<%=pluList[i].Price%></span></h4>
+                        <h4>会员价：<span class="label label-danger">￥<%=pluList[i].HyPrice%></span></h4>
                     </div>
                     <div class="col-xs-6">
                         <h4>单位：<%=pluList[i].Unit%></h4>
                         <h4>规格：<%=pluList[i].Spec%></h4>
                     </div>             
                 </div>
-                <div class="row col-xs-4 pull-right">
-                    <div class="input-group">
-                        <input type="number" class="form-control" value="1"/>
-                        <span class="input-group-btn">
-                            <a class="btn btn-primary" href="#sale/<%=i%>">购买</a>
-                        </span>
-                    </div>  
-                </div>
-                <%}else {%>
-                 <div class="row">
-                    <div class="col-xs-6">
-                        <div class="input-group">
-                            <span class="input-group-addon">原价</span>
-                            <input type="text" class="form-control"/>
-                        </div>
-
-                        <div class="input-group">
-                            <span class="input-group-addon">现价</span>
-                            <input type="text" class="form-control"/>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">折扣</span>
-                            <input type="text" class="form-control"/>
-                        </div>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <h4>单位：<%=pluList[i].Unit%></h4>
-                        <h4>规格：<%=pluList[i].Spec%></h4>
-                    </div>             
-                </div>
-
-                 <div class="row">
-                     <div class="col-xs-8">
-                        <div class="input-group">
-                            <span class="input-group-addon">备注</span>
-                            <input type="text" class="form-control"/>
-                        </div>
-                     </div>
-                     <div class="col-xs-4  pull-right">
-                         <div class="input-group">
-                            <input type="number" class="form-control" value="1"/>
-                            <span class="input-group-btn">
-                                <a class="btn btn-primary" href="#sale/<%=i%>">购买</a>
-                            </span>
-                        </div>  
-                     </div>
-                    
-                </div>
-                <%}%>
                 <div class="row">
-                    <p><b><%=pluList[i].Brief%></b></p>
+                    <div>
+                        <h4><%=pluList[i].Brief%></h4>
+                    </div>                    
                 </div>
+                <div class="row">
+                    <div class="col-xs-5 col-xs-offset-4">
+                        <a class="btn btn-primary" onclick="new function(){router.navigate('sale/<%=i%>',{trigger:true,replace:true});}">&nbsp;&nbsp;购&nbsp;&nbsp;&nbsp;&nbsp;买&nbsp;&nbsp;</a>
+                    </div>
+                </div>
+
+                
             </div>
         </div>
     </div>
@@ -105,6 +62,56 @@
         </center>
 </script>
 
+<script id="tempPluModal" type="text/template">
+    <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                   <h4 class="modal-title text-info" id="modal_pluName"><%=PluCode%> - <%=PluName%></h4>
+               </div>
+               <div class="modal-body">
+                   <div class="row">
+                       <div class="input-group">
+                           <span class="input-group-addon">数量</span>
+                           <input type="text" id="modal_xsCount" class="form-control" placeholder="数量" value="1"/>
+                           <span class="input-group-addon"><%=Unit==""?"件":Unit%></span>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="input-group">
+                           <span class="input-group-addon">原价</span>
+                           <input type="text" id="modal_price" class="form-control" placeholder="原售价" value="<%=Price%>" <%=Price!=0?"readonly":""%>/>
+                           <span class="input-group-addon">元</span>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="input-group">
+                           <span class="input-group-addon">现价</span>
+                           <input type="text" id="modal_fsPrice" class="form-control" placeholder="会员价" value="<%=HyPrice%>"  <%=Price!=0?"readonly":""%>/>
+                           <span class="input-group-addon">元</span>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="input-group">
+                           <span class="input-group-addon">折扣</span>
+                           <input type="text" id="modal_disCount" class="form-control" placeholder="折扣" value="100"  <%=Price!=0?"readonly":""%>/>
+                           <span class="input-group-addon">％</span>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="input-group">
+                           <span class="input-group-addon">备注</span>
+                           <input type="text" id="modal_remark" class="form-control" placeholder="商品相关信息"/>
+                       </div>
+                   </div>
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                   <button type="button" class="btn btn-primary" id="modal_ok">确定</button>
+               </div>
+           </div>
+       </div>
+</script>
 <script type="text/javascript">
     //#region 声明命名空间
     if (window.Plu == undefined) {
@@ -167,7 +174,7 @@
                     },
                     success: function (collection, response, options) {
                         //获取商品成功
-                        pluView.maxPage = response.length / 10 + 1;
+                        pluView.maxPage = Math.ceil( response.length / 10);
                         pluView.curPage = 1;
                         pluView.render();
                     },
@@ -181,6 +188,92 @@
                 pluView.curPage = page;
                 pluView.render();
             },
+        });
+    }
+    //#endregion
+
+    //#region 声明PluModalView
+    if (window.Plu.PluModalView == undefined) {
+        window.Plu.PluModalView = Backbone.View.extend({
+            plu:null,
+            xsCount:0,
+            events: {
+                "click button": "doClickButton",
+                "change input":"doChangeValue"
+            },
+            doClickButton: function (e) {
+                if ($(e.currentTarget).attr("id") == "modal_ok") {
+                    //点击确定
+                    var remark=$("#modal_remark").val();
+                    var price=$("#modal_price").val();
+                    var fsPrice=$("#modal_fsPrice").val();
+                    var disCount=$("#modal_disCount").val();
+                    var xsCount = $("#modal_xsCount").val();
+                    if (price== "0"||fsPrice=="") {
+                        alert("原价不能为空");
+                        return;
+                    }
+                    if (fsPrice == "0"||fsPrice=="") {
+                        alert("现价不能为空");
+                        return;
+                    }
+                    if (xsCount == "0"||xsCount=="") {
+                        alert("销售数量不能为空");
+                    }
+                    var salePlu = new window.Sale.SalePluModel({
+                        "LnNo": lnNO++,
+                        "PluId": this.plu.get("PluId"),
+                        "PluCode": this.plu.get("PluCode"),
+                        "PluName": this.plu.get("PluName"),
+                        "Price": parseInt(price),
+                        "FsPrice": parseInt(fsPrice),
+                        "XsCount": parseInt(this.xsCount),
+                        "XsTotal":this.xsCount*fsPrice,
+                        "DisCountOff": parseInt(disCount),
+                        "Remark": remark
+                    });
+                    salePluList.add(salePlu);
+                    totalCount += parseInt(xsCount);
+                    menuView.setSaleCount(totalCount);
+                    this.hide();
+                }
+            },
+
+            doChangeValue: function (e) {
+                switch($(e.currentTarget).attr("id")){
+                    case "modal_price":
+                        if (this.$el.find("#modal_fsPrice").val() == "0") {
+                            this.$el.find("#modal_fsPrice").val($(e.currentTarget).val());
+                        }
+                        break;
+                    case "modal_fsPrice":
+                        if (this.$el.find("#modal_price").val() == "0") {
+                            this.$el.find("#modal_price").val($(e.currentTarget).val());
+                        }
+                        else {
+                            var disCount = this.$el.find("#modal_fsPrice").val() / this.$el.find("#modal_price").val() * 100;
+                            this.$el.find("#modal_disCount").val(disCount);
+                        }
+                        break;
+                    case "modal_disCount":
+                        break;
+                    case "modal_remark":
+                        break;
+                }
+            },
+
+            hide:function(){
+                this.$el.modal("hide");
+            },
+            template:_.template($("#tempPluModal").html()),
+            render: function (plu) {
+                this.$el.html(this.template(plu.toJSON(plu)));
+            },
+            show: function (plu) {
+                this.plu = plu;
+                this.render(plu);
+                this.$el.modal("show");
+            }
         });
     }
     //#endregion
@@ -200,7 +293,6 @@
                 }
                 this.filterType = type;
                 this.filterValue = $("#filterValue").val();
-                //router.navigate("getPluList", { trigger: true });
                 pluView.loadPlu();
             }
         });
@@ -212,6 +304,7 @@
     var pluView;
     var pluList; //商品列表
     var filterView;//过滤器
+    var pluModalView;//大码商品
     $(function () {
         pluView = new window.Plu.PluView({
             el: "#pluListView"
@@ -219,6 +312,9 @@
         filterView = new window.Plu.FilterView({
             el: "#pluFilter"
         })
+        pluModalView = new window.Plu.PluModalView({
+            el: "#pluModal"
+        });
         pluList = new window.Plu.PluList(); //商品列表
         pluView.loadPlu();
     });
@@ -239,13 +335,17 @@
         </div>
         <div class="input-group col-xs-4 pull-right">
             <span class="input-group-addon">当前第1页</span>
-            <input type="text" class="form-control" placeholder="页码">
+            <input type="text" id="pageJump" class="form-control" placeholder="页码">
              <span class="input-group-btn">
-                <a class="btn btn-default" type="button">跳转</a>
+                <a class="btn btn-default" href="#jumpToPage" type="button">跳转</a>
               </span>
         </div>
 
     </div>   
+</div>
+
+<div id="pluModal" class="modal fade" role="dialog" aria-labelledby="modal_pluName" aria-hidden="true">
+   
 </div>
 
 <div id="pluListView" class="media-list" >

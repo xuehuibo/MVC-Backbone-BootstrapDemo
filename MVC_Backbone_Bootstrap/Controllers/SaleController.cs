@@ -11,7 +11,7 @@ using ShopSaleForPad.Attribute;
 
 namespace ShopSaleForPad.Controllers
 {
-    [Authorization]
+    [AuthorizationAttribute]
     public class SaleController : Controller
     {
         //
@@ -22,6 +22,15 @@ namespace ShopSaleForPad.Controllers
         }
 
         public PartialViewResult PluList()
+        {
+            return new PartialViewResult();
+        }
+        public PartialViewResult ShowVip()
+        {
+            return new PartialViewResult();
+        }
+
+        public PartialViewResult ShowDetail()
         {
             return new PartialViewResult();
         }

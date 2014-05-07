@@ -11,7 +11,7 @@ using ShopSaleForPad.Attribute;
 
 namespace ShopSaleForPad.Controllers
 {
-    [Authorization]
+    [AuthorizationAttribute]
     public class HomeController : Controller
     {
         //
@@ -21,7 +21,6 @@ namespace ShopSaleForPad.Controllers
         {
             return View();
         }
-
         [AllowAnonymous]
         public PartialViewResult Logon()
         {
@@ -39,7 +38,7 @@ namespace ShopSaleForPad.Controllers
             ResultModel rst = new ResultModel();
             try
             {
-                UserModel user = SigninBLL.Signin(signinModel,ConfigurationManager.AppSettings["OrgCode"], ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString);
+                UserModel user = SigninBLL.Signin(signinModel, ConfigurationManager.AppSettings["OrgCode"], ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
                 //Session.Add("User", user);
                 HttpContext.Session.Add("LoginedUser", user);
                 rst.Rst = 1;

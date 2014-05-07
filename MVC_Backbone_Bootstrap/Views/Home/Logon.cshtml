@@ -161,6 +161,7 @@
                             $("#btnClear").removeClass("disabled");
                             if (data.Rst == 1) {
                                 //登录成功
+                                //window.sessionStorage.setItem("user", JSON.stringify(signinModel.toJSON(signinModel)));//存入本地session
                                 window.localStorage.removeItem("user");
                                 if (document.getElementById("rememberPwd").checked) {
                                     window.localStorage.setItem("user", JSON.stringify(signinModel.toJSON(signinModel)));

@@ -135,6 +135,7 @@
     <Compile Include="Controllers\PluApiController.cs" />
     <Compile Include="Controllers\SaleApiController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
+    <Compile Include="Controllers\VipApiController.cs" />
     <Compile Include="Filters\ActionFilter.cs" />
     <Compile Include="Attribute\AuthorizationAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -164,8 +165,6 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\Bootstrap\bootstrap.js" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
-    <Content Include="Scripts\Controls.js" />
-    <Content Include="Scripts\Global.js" />
     <Content Include="Scripts\JQuery\jquery-2.1.0.js" />
     <Content Include="Scripts\JQuery\jquery-2.1.0.min.js" />
     <Content Include="Scripts\Tool.js" />
@@ -216,7 +215,8 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\PadSale.pubxml" />
     <Content Include="Views\Sale\PluList.cshtml" />
-    <Content Include="Views\Sale\LogonVip.cshtml" />
+    <Content Include="Views\Sale\ShowVip.cshtml" />
+    <Content Include="Views\Sale\ShowDetail.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

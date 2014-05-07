@@ -12,6 +12,7 @@
         @Styles.Render("~/bundles/css")
     </head>
     <body background="~/Content/images/Background.jpg">
+        <a name="show"></a>
         @RenderSection("Template",false)@*此处为Html模板*@
         @RenderSection("JS",true)@*在此处进行类型声明及对象初始化*@
         <div class="navbar navbar-inverse navbar-fixed-top">

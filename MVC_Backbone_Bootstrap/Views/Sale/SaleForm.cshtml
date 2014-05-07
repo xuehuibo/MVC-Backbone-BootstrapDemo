@@ -4,29 +4,6 @@
 }
 @section Template{
 
-    <script id="menuView" type="text/template">
-        <li>
-            <a href="#">开始交易</a>
-        </li>
-        <li>
-             <a href="#logonVip">会员信息<span class="badge">未登录</span></a>
-        </li>
-       <li >
-            <a href="#showPluList">添加商品</a>
-       </li>
-        <li>
-            <a href="#showSale">购物车<span class="badge">4件</span></a>
-        </li>
-        <li>
-             <a href="#yiwei">一维码开票</a>
-        </li>
-        <li>
-            <a href="#erwei">二维码开票</a>
-        </li>
-        <li>
-            <a href="#finish">结束交易</a>
-        </li> 
-    </script>
 }
 
 @section JS{
@@ -34,7 +11,8 @@
 
     <script type="text/javascript">
         if (window.Sale == undefined) {
-                Tools.Namespace.register("window.Sale");
+            Tools.Namespace.register("window.Sale");
+            location.hash="#do"
             }
             
         //#region 声明MenuView
@@ -44,7 +22,6 @@
                     "click li":"doClick"
                 },
                 doClick: function (e) {
-                    //console.info($(this));
                     this.$el.children().removeClass("active");
                     if (!$(e.currentTarget).hasClass("disabled")) {
                         $(e.currentTarget).addClass("active");
@@ -55,17 +32,30 @@
                     this.$el.children().addClass("disabled");
                     this.$el.children().removeClass("active");
                     this.$el.children().first("li").removeClass("disabled");
+                    this.$el.find("#vipStatus").html("未录入");
+                    this.$el.find("#saleCounts").html("0件");
                 },
                 openTrade: function () {
                     this.$el.children().removeClass("disabled");
                     this.$el.children().removeClass("active");
                     this.$el.children().first("li").addClass("disabled");
+                },
+                setVip: function (hasVip) {
+                    if (hasVip) {
+                        this.$el.find("#vipStatus").html("已录入");
+                    }
+                    else {
+                        this.$el.find("#vipStatus").html("未录入");
+                    }
+                },
+                setSaleCount: function (counts) {
+                    this.$el.find("#saleCounts").html(counts+"件");
                 }
             });
         }
         //#endregion
 
-        //#region 声明SaleModel
+        //#region 声明SalePluModel
             if (window.Sale.SalePluModel == undefined) {
                 window.Sale.SalePluModel = Backbone.Model.extend({
                     defaults: {
@@ -85,30 +75,6 @@
                     }
                 });
             }
-
-            if (window.Sale.SaleModel == undefined) {
-                window.Sale.SaleModel == Backbone.Model.extend({
-                    defaults: {
-                        "PadSaleNo": 0,
-                        "OrgCode": "",
-                        "ShpId": 0,
-                        "ShpCode": "",
-                        "ShpName": "",
-                        "ClerkId": 0,
-                        "ClerkCode": "",
-                        "ClerkName": "",
-                        "BuildDate": "",
-                        "VipCardNo": "",
-                        "XsTotal": 0,
-                        "NeedPayTotal": 0,
-                        "PayStatus": "0",
-                        "PosPayTotal": 0,
-                        "IsTook": "0",
-                        "SaleSource": "0",
-                        "SalePluList": []
-                    }
-                });
-            }
             //#endregion
 
         //#region 声明SalePluList
@@ -123,39 +89,91 @@
             if (window.Sale.Router == undefined) {
                 window.Sale.Router = Backbone.Router.extend({
                     routes: {
-                        "":"doIniatialize",
                         "beginSale": "doBeginSale",
+                        "showVip":"doShowVip",
                         "logonVip": "doLogonVip",
-                        "trolley": "doShowTrolley ",//购物车
-                        "invoice": "doInvoice",//开票
+                        "invoice": "doInvoice",
                         "endSale": "doEndSale",
                         "showPluList": "doShowPluList",
                         "sale/:index": "doSale",
-                        "goToPage/:page":"goToPage"
-                    },
-                    doIniatialize: function () {
-                        //初始化界面
-                        menuView.closeTrade();
+                        "goToPage/:page": "goToPage",
+                        "jumpToPage": "doJump",
+                        "showDetail":"doShowDetail"
                     },
                     doBeginSale: function () {
+                        lnNO = 1;
+                        totalCount = 0;
+                        salePluList.reset();
                         menuView.openTrade();
                     },
+                    doShowVip: function () {
+                        $("#mainPanel").load("/Sale/ShowVip");
+                    },
                     doLogonVip: function () {
+                        vipList.fetch({
+                            data: { "no": $("#no").val() },
+                            success: function (collection, response, options) {
+                                if (collection.length == 1) {
+                                    var vipModel = collection.at(0);
+                                    if (sessionStorage.hasOwnProperty("curVip")) {
+                                        sessionStorage.removeItem("curVip");//如果已经有vip属性，移除
+                                    }
+                                    sessionStorage.setItem("curVip", JSON.stringify(vipModel.toJSON(vipModel)));
+                                    vipShowView.render(vipModel.toJSON(vipModel), 0);
+                                    menuView.setVip(true);
+                                }
+                                else if (collection.length > 1) {
+
+                                }
+                                else if (collection.length == 0) {
+                                    alert("未找到该会员信息！");
+                                }
+                                location.hash = "#";
+                            }
+                        });
+                        $("#no").val("");
+                       
                     },
                     doShowPluList: function () {
                         $("#mainPanel").load("/Sale/PluList");
                     },
-                    doShowTrolley: function () {
-                    },
                     doInvoice: function () {
+                        console.info("invoice");
                     },
                     doEndSale: function () {
+                        sessionStorage.removeItem("curVip");
+                        salePluList.reset();
+                        menuView.closeTrade();
+                        $("#mainPanel").html("");
                     },
                     doSale: function (id) {
-                        console.info("sale-" + id);
+                        var plu = pluList.at(id);
+                        pluModalView.show(plu);
+                        location.hash = "#do";
                     },
                     goToPage: function (page) {
                         pluView.goToPage(page);
+                    },
+
+                    doJump: function () {
+                        var page = $("#pageJump").val();
+                        $("#pageJump").val(null);
+                        if (isNaN(page)) {
+                            alert("请输入数字！");
+                        }
+                        else {
+                            if (page > pluView.maxPage) {
+                                page = pluView.maxPage;
+                            }
+                            if (page < 1) {
+                                page = 1;
+                            }
+                            this.navigate("goToPage/" + page, {trigger:true});
+                        }
+                    },
+
+                    doShowDetail: function () {
+                        $("#mainPanel").load("/Sale/ShowDetail");
                     }
                 });
             }
@@ -166,47 +184,56 @@
     <script type="text/javascript">
         var router;
         var menuView;
-        var salePluList;//销售闪频流水
+        var salePluList;
+        var lnNO;
+        var totalCount;
         $(function () {
+            sessionStorage.removeItem("curVip");
+            salePluList = new window.Sale.SalePluList();
             menuView = new window.Sale.MenuView({
                 el: "#menuList"
             });
+            menuView.closeTrade();
             router = new window.Sale.Router();
             Backbone.history.start();
         })
         </script>
 }
 <div class="row">
-    <div class="panel panel-info col-xs-3">
+    <div class="col-xs-3" data-spy="affix" data-offset-top="600">
+        <div class="panel panel-info">
         <ul id="menuList" class="nav nav-pills nav-stacked" style="padding-right:1px">
         @*此容器中显示菜单*@
-            @*.nav > li > a:focus  控制按键激活时背景颜色*@
-            <li class="disabled">
-                <a href="#beginSale" >开始交易</a>
+            <li>
+                <a href="#beginSale">开始交易</a>
             </li>
-            <li class="active">
-                 <a href="#logonVip">会员信息<span class="badge">未登录</span></a>
+            <li>
+                 <a href="#showVip">会员信息<span class="badge" id="vipStatus">未登录</span></a>
             </li>
            <li >
                 <a href="#showPluList">添加商品</a>
            </li>
             <li>
-                <a href="#showSale">购物清单<span class="badge">4件</span></a>
+                <a href="#showDetail">购物清单<span class="badge" id="saleCounts">0件</span></a>
             </li>
             <li>
-                 <a href="#yiwei">一维开票</a>
+                 <a href="#invoice">一维码开票</a>
             </li>
             <li>
-                <a href="#erwei">二维开票</a>
+                <a href="#erwei">二维码开票</a>
             </li>
             <li>
-                <a href="#finish">结束交易</a>
+                <a href="#endSale">结束交易</a>
             </li> 
         </ul>
     </div>
-    
-    <div id="mainPanel" class="panel panel-info col-xs-9">
+    </div>
+
+    <div class="col-xs-9">
+        <div id="mainPanel" class="panel panel-info">
        @*在此容器中显示内容*@
-    </div>   
+    </div>  
+    </div>
+ 
 </div>
 

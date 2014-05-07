@@ -11,10 +11,10 @@ using System.Web.SessionState;
 using ShopSaleForPad.Attribute;
 using BLL;
 using System.Configuration;
+using Newtonsoft.Json;
 
 namespace ShopSaleForPad.Controllers
 {
-    [AuthorizationAttribute]
     public class PluApiController : ApiController
     {
         // GET api/pluapi
@@ -22,6 +22,7 @@ namespace ShopSaleForPad.Controllers
         public IEnumerable<PluModel> Get(int filterType,string filterValue)
         {
             UserModel user = HttpContext.Current.Session["LoginedUser"] as UserModel;
+            //UserModel user = JsonConvert.DeserializeObject<UserModel>(userJson);
 
             if (user == null)
             {
@@ -31,7 +32,7 @@ namespace ShopSaleForPad.Controllers
             {
                 try
                 {
-                    return PluBLL.GetPluList(user.OrgCode, user.ShopID, filterType, filterValue, ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString);
+                    return PluBLL.GetPluList(user.OrgCode, user.ShopID, filterType, filterValue, ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
                 }
                 catch 
                 {
