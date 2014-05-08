@@ -145,6 +145,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\Background.jpg" />
+    <Content Include="Content\images\barcode1v.jpg" />
+    <Content Include="Content\images\barcode2v.jpg" />
     <Content Include="Content\images\default.jpg" />
     <Content Include="Content\images\ldj.jpg" />
     <Content Include="Content\images\logo.png" />
@@ -217,6 +219,7 @@
     <Content Include="Views\Sale\PluList.cshtml" />
     <Content Include="Views\Sale\ShowVip.cshtml" />
     <Content Include="Views\Sale\ShowDetail.cshtml" />
+    <Content Include="Views\Sale\Invoice.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

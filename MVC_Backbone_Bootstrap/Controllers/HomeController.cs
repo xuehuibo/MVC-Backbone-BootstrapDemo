@@ -19,12 +19,14 @@ namespace ShopSaleForPad.Controllers
 
         public ViewResult Index()
         {
+            ViewBag.Title = ConfigurationManager.AppSettings["Title"];
             return View();
         }
         [AllowAnonymous]
-        public PartialViewResult Logon()
+        public ViewResult Logon()
         {
-            return new PartialViewResult();
+            ViewBag.Title = ConfigurationManager.AppSettings["Title"];
+            return View();
         }
         /// <summary>
         /// 登录

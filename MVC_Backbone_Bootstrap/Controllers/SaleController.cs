@@ -18,21 +18,35 @@ namespace ShopSaleForPad.Controllers
         // GET: /Sale/
         public ViewResult SaleForm()
         {
+            ViewBag.Title = ConfigurationManager.AppSettings["Title"];
             return View();
         }
 
         public PartialViewResult PluList()
         {
-            return new PartialViewResult();
+            return PartialView();
         }
+
         public PartialViewResult ShowVip()
         {
-            return new PartialViewResult();
+            return PartialView();
         }
 
         public PartialViewResult ShowDetail()
         {
-            return new PartialViewResult();
+            return PartialView();
+        }
+
+        public PartialViewResult Invoice()
+        {
+            UserModel user = Session["LoginedUser"] as UserModel;
+            ViewBag.Invoice_Title = ConfigurationManager.AppSettings["Invoice_Title"];
+            ViewBag.Invoice_Remark = ConfigurationManager.AppSettings["Invoice_Remark"];
+            ViewBag.ShopCode = user.ShopCode;
+            ViewBag.ShopName = user.ShopName;
+            ViewBag.UserCode = user.UserCode;
+            ViewBag.UserName = user.UserName;
+            return PartialView();
         }
     }
 }

@@ -18,6 +18,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="row">
         <table class="table table-striped text-warning">
             <thead>
@@ -30,6 +31,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="row">
         <table class="table table-striped text-warning">
             <thead>
@@ -105,22 +107,22 @@
         vipShowView.render(curVip);
     })
 </script>
-<div class="row">
-    <table class="table table-striped text-warning">
-        <tbody>
-            <tr>
-                <td>
-                    <form class="form-inline" role="form">
-                        <div class="form-group">
-                            <input id="no" type="text" class="form-control" placeholder="卡号或手机号"/>
-                        </div>
-                        <a class="btn btn-default" href="#logonVip">确定</a>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div id="vipPanel">
 
+<div class="panel-body">
+    <div class="row">
+        <div class="navbar" id="pluFilter">
+            <div class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input id="no" type="text" class="form-control" placeholder="卡号或手机号"/>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-default" href="#logonVip">确定</a>
+                </div>
+            </div>   
+        </div>
+    </div>
+
+    <div id="vipPanel">
+
+    </div>
 </div>

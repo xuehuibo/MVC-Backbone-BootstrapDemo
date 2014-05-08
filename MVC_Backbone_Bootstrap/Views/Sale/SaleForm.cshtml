@@ -1,5 +1,4 @@
 ﻿@{
-    ViewBag.Title = "开票";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Template{
@@ -12,7 +11,6 @@
     <script type="text/javascript">
         if (window.Sale == undefined) {
             Tools.Namespace.register("window.Sale");
-            location.hash="#do"
             }
             
         //#region 声明MenuView
@@ -32,6 +30,7 @@
                     this.$el.children().addClass("disabled");
                     this.$el.children().removeClass("active");
                     this.$el.children().first("li").removeClass("disabled");
+                    this.$el.children().last("li").removeClass("disabled");
                     this.$el.find("#vipStatus").html("未录入");
                     this.$el.find("#saleCounts").html("0件");
                 },
@@ -48,8 +47,12 @@
                         this.$el.find("#vipStatus").html("未录入");
                     }
                 },
-                setSaleCount: function (counts) {
-                    this.$el.find("#saleCounts").html(counts+"件");
+                setSaleCount: function () {
+                    var count = 0;
+                    for (var i = 0; i < salePluList.length; i++) {
+                        count += salePluList.at(i).get("XsCount");
+                    }
+                    this.$el.find("#saleCounts").html(count + "件");
                 }
             });
         }
@@ -71,7 +74,8 @@
                         "XsCount": 0,
                         "XsTotal": 0,
                         "DisCountOff": 0,
-                        "Remark": ""
+                        "Remark": "",
+                        "PluImage":"default"
                     }
                 });
             }
@@ -98,18 +102,35 @@
                         "sale/:index": "doSale",
                         "goToPage/:page": "goToPage",
                         "jumpToPage": "doJump",
-                        "showDetail":"doShowDetail"
+                        "showDetail": "doShowDetail",
+                        "clearSalePlu": "doClearSalePlu",
+                        "deleteSalePlu/:index": "doDeleteSalePlu",
+                        "salePluPlus/:index": "doPlus",
+                        "salePluMinus/:index": "doMinus",
+                        "salePluChangeCount/:index&:newCount":"doChangeCount"
                     },
+
                     doBeginSale: function () {
+                        if (saleNow) {
+                            return;
+                        }
                         lnNO = 1;
-                        totalCount = 0;
+                        saleNow = true;
                         salePluList.reset();
                         menuView.openTrade();
                     },
+
                     doShowVip: function () {
+                        if (!saleNow) {
+                            return;
+                        }
                         $("#mainPanel").load("/Sale/ShowVip");
                     },
+
                     doLogonVip: function () {
+                        if (!saleNow) {
+                            return;
+                        }
                         vipList.fetch({
                             data: { "no": $("#no").val() },
                             success: function (collection, response, options) {
@@ -134,23 +155,38 @@
                         $("#no").val("");
                        
                     },
+
                     doShowPluList: function () {
+                        if (!saleNow) {
+                            return;
+                        }
                         $("#mainPanel").load("/Sale/PluList");
                     },
+
                     doInvoice: function () {
-                        console.info("invoice");
+                        if (!saleNow) {
+                            return;
+                        }
+                        $("#mainPanel").load("/Sale/invoice");
                     },
+
                     doEndSale: function () {
+                        if (!saleNow) {
+                            return;
+                        }
                         sessionStorage.removeItem("curVip");
                         salePluList.reset();
+                        saleNow = false;
                         menuView.closeTrade();
                         $("#mainPanel").html("");
                     },
+
                     doSale: function (id) {
                         var plu = pluList.at(id);
                         pluModalView.show(plu);
                         location.hash = "#do";
                     },
+
                     goToPage: function (page) {
                         pluView.goToPage(page);
                     },
@@ -173,7 +209,61 @@
                     },
 
                     doShowDetail: function () {
+                        if (!saleNow) {
+                            return;
+                        }
                         $("#mainPanel").load("/Sale/ShowDetail");
+                    },
+
+                    doClearSalePlu: function () {
+                        salePluList.reset();
+                        saleDetailView.render();
+                        menuView.setSaleCount();
+                    },
+
+                    doDeleteSalePlu: function (index) {
+                        salePluList.remove(salePluList.at(index));
+                        menuView.setSaleCount();
+                        saleDetailView.render();
+                    },
+
+                    doPlus: function (index) {
+                        var salePlu = salePluList.at(index);
+                        var count = salePlu.get("XsCount")+1;
+                        var fsPrice=salePlu.get("FsPrice");
+                        salePlu.set({ "XsCount": count, "XsTotal": Math.round(fsPrice * count * 10000) / 10000 });
+                        menuView.setSaleCount();
+                        saleDetailView.render();
+                        location.hash = "#do";
+                    },
+
+                    doMinus: function (index) {
+                        var salePlu = salePluList.at(index);
+                        var count = salePlu.get("XsCount") - 1;
+                        if (count == 0) {
+                            console.info("delete");
+                            this.doDeleteSalePlu(index);
+                            return;
+                        }
+                        var fsPrice = salePlu.get("FsPrice");
+                        salePlu.set({ "XsCount": count, "XsTotal": Math.round(fsPrice * count * 10000) / 10000 });
+                        menuView.setSaleCount();
+                        saleDetailView.render();
+                        location.hash = "#do";
+                    },
+
+                    doChangeCount: function (index,newCount) {
+                        var salePlu = salePluList.at(index);
+                        newCount = parseInt(newCount);
+                        var fsPrice = salePlu.get("FsPrice");
+                        if (newCount == 0) {
+                            this.doDeleteSalePlu(index);
+                            return;
+                        }
+                        salePlu.set({ "XsCount": newCount, "XsTotal": Math.round(fsPrice * newCount * 10000) / 10000 });
+                        menuView.setSaleCount();
+                        saleDetailView.render();
+                        location.hash = "#do";
                     }
                 });
             }
@@ -186,7 +276,7 @@
         var menuView;
         var salePluList;
         var lnNO;
-        var totalCount;
+        var saleNow=false;
         $(function () {
             sessionStorage.removeItem("curVip");
             salePluList = new window.Sale.SalePluList();
@@ -200,39 +290,39 @@
         </script>
 }
 <div class="row">
-    <div class="col-xs-3" data-spy="affix" data-offset-top="600">
-        <div class="panel panel-info">
-        <ul id="menuList" class="nav nav-pills nav-stacked" style="padding-right:1px">
-        @*此容器中显示菜单*@
-            <li>
-                <a href="#beginSale">开始交易</a>
-            </li>
-            <li>
-                 <a href="#showVip">会员信息<span class="badge" id="vipStatus">未登录</span></a>
-            </li>
-           <li >
-                <a href="#showPluList">添加商品</a>
-           </li>
-            <li>
-                <a href="#showDetail">购物清单<span class="badge" id="saleCounts">0件</span></a>
-            </li>
-            <li>
-                 <a href="#invoice">一维码开票</a>
-            </li>
-            <li>
-                <a href="#erwei">二维码开票</a>
-            </li>
-            <li>
-                <a href="#endSale">结束交易</a>
-            </li> 
-        </ul>
-    </div>
+    <div class="col-xs-2">
+        <div class="panel affix">
+            <ul id="menuList" class="nav nav-pills nav-stacked">
+            @*此容器中显示菜单*@
+                <li>
+                    <a href="#beginSale">开始交易</a>
+                </li>
+                <li>
+                     <a href="#showVip">会员信息<span class="badge" id="vipStatus">未登录</span></a>
+                </li>
+               <li >
+                    <a href="#showPluList">添加商品</a>
+               </li>
+                <li>
+                    <a href="#showDetail">销售清单<span class="badge" id="saleCounts">0件</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                </li>
+                <li>
+                     <a href="#invoice">开票</a>
+                </li>
+                <li>
+                    <a href="#endSale">结束交易</a>
+                </li> 
+                <li>
+                    <a href="#takeGoods" class="text-success">提货</a>
+                </li> 
+            </ul>
+        </div>
     </div>
 
-    <div class="col-xs-9">
+    <div class="col-xs-10">
         <div id="mainPanel" class="panel panel-info">
        @*在此容器中显示内容*@
-    </div>  
+        </div>  
     </div>
  
 </div>

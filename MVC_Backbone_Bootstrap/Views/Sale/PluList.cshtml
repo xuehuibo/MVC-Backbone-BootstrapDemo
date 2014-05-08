@@ -1,8 +1,8 @@
 ﻿<script type="text/template" id="tempPluList">
     @*商品列表模板*@
-        <%for(var i=10*(curPage-1);i<10*(curPage-1)+10 && i<pluList.length;i++){%>
-            <div class="list-group-item media">
-        <div class="list-group-item-body row">
+    <%for(var i=10*(curPage-1);i<10*(curPage-1)+10 && i<pluList.length;i++){%>
+    <div class="list-group-item media">
+        <div class="list-group-item-body">
             <img class="media-object col-xs-3" src="../Content/images/<%=pluList[i].PluImage%>.jpg">
             <div class="col-xs-8 col-xs-offset-1">
                 <h4 class="media-heading"><%=pluList[i].PluCode+' - '+pluList[i].PluName+'&nbsp;&nbsp;条码:'+pluList[i].BarCode%></h4>
@@ -22,7 +22,7 @@
                     </div>                    
                 </div>
                 <div class="row">
-                    <div class="col-xs-5 col-xs-offset-4">
+                    <div class="col-xs-4 pull-right">
                         <a class="btn btn-primary" onclick="new function(){router.navigate('sale/<%=i%>',{trigger:true,replace:true});}">&nbsp;&nbsp;购&nbsp;&nbsp;&nbsp;&nbsp;买&nbsp;&nbsp;</a>
                     </div>
                 </div>
@@ -31,13 +31,13 @@
             </div>
         </div>
     </div>
-        <% }%>
-        <center>
+    <% }%>
+    <center>
              <ul class="pagination">
                  <%if(curPage==1){%>
                 <li class="disabled"><a>&laquo;</a></li>
                  <%}else {%>
-                 <li><a href="#goToPage/<%=parseInt(curPage)-1%>">&laquo;</a></li>
+                 <li><a href="#goToPage/<%=parseFloat(curPage)-1%>">&laquo;</a></li>
                  <%}%>
                  <% var firstPage=curPage-4 ;%>
                  <% if(firstPage>maxPage-9){%>
@@ -56,7 +56,7 @@
                  <%if(10*curPage>pluList.length){%>
                 <li class="disabled"><a>&raquo;</a></li>
                  <%} else {%>
-                  <li><a href="#goToPage/<%=parseInt(curPage)+1%>">&raquo;</a></li>
+                  <li><a href="#goToPage/<%=parseFloat(curPage)+1%>">&raquo;</a></li>
                  <%}%>
             </ul>
         </center>
@@ -112,6 +112,7 @@
            </div>
        </div>
 </script>
+
 <script type="text/javascript">
     //#region 声明命名空间
     if (window.Plu == undefined) {
@@ -186,6 +187,7 @@
             },
             goToPage: function (page) {
                 pluView.curPage = page;
+                $("#cur_page").html("第"+page+"页");
                 pluView.render();
             },
         });
@@ -196,7 +198,6 @@
     if (window.Plu.PluModalView == undefined) {
         window.Plu.PluModalView = Backbone.View.extend({
             plu:null,
-            xsCount:0,
             events: {
                 "click button": "doClickButton",
                 "change input":"doChangeValue"
@@ -225,16 +226,16 @@
                         "PluId": this.plu.get("PluId"),
                         "PluCode": this.plu.get("PluCode"),
                         "PluName": this.plu.get("PluName"),
-                        "Price": parseInt(price),
-                        "FsPrice": parseInt(fsPrice),
-                        "XsCount": parseInt(this.xsCount),
-                        "XsTotal":this.xsCount*fsPrice,
-                        "DisCountOff": parseInt(disCount),
-                        "Remark": remark
+                        "Price": parseFloat(price),
+                        "FsPrice": parseFloat(fsPrice),
+                        "XsCount": parseInt(xsCount),
+                        "XsTotal":Math.round( xsCount*fsPrice*100)/100,
+                        "DisCountOff": parseFloat(disCount),
+                        "Remark": remark,
+                        "PluImage":this.plu.get("PluImage")
                     });
                     salePluList.add(salePlu);
-                    totalCount += parseInt(xsCount);
-                    menuView.setSaleCount(totalCount);
+                    menuView.setSaleCount();
                     this.hide();
                 }
             },
@@ -251,7 +252,7 @@
                             this.$el.find("#modal_price").val($(e.currentTarget).val());
                         }
                         else {
-                            var disCount = this.$el.find("#modal_fsPrice").val() / this.$el.find("#modal_price").val() * 100;
+                            var disCount = Math.round( this.$el.find("#modal_fsPrice").val() / this.$el.find("#modal_price").val() * 100*100)/100;
                             this.$el.find("#modal_disCount").val(disCount);
                         }
                         break;
@@ -319,35 +320,36 @@
         pluView.loadPlu();
     });
 </script>
+<div class="panel-body">
+    <div class="navbar" id="pluFilter">
+        <div class="navbar-form navbar-left">
+            <div class="form-group col-xs-4">
+                <input id="filterValue" type="text" class="form-control" placeholder="条码、编码或品名"/>
+            </div>
+            <div class="btn-group col-xs-4" data-toggle="buttons">
+                <label class="btn btn-default active">
+                    <input type="radio" value="0"/>全部
+                </label>
+                <label class="btn btn-default">
+                    <input type="radio" value="1"/>过滤
+                </label>
+            </div>
+            <div class="input-group col-xs-4 pull-right">
+                <span class="input-group-addon" id="cur_page">第1页</span>
+                <input type="text" id="pageJump" class="form-control" placeholder="页码">
+                 <span class="input-group-btn">
+                    <a class="btn btn-default" href="#jumpToPage" type="button">跳转</a>
+                  </span>
+            </div>
 
-<div class="navbar" id="pluFilter">
-    <div class="navbar-form navbar-left">
-        <div class="form-group col-xs-4">
-            <input id="filterValue" type="text" class="form-control" placeholder="条码、编码或品名"/>
-        </div>
-        <div class="btn-group col-xs-4" data-toggle="buttons">
-            <label class="btn btn-default active">
-                <input type="radio" value="0"/>全部商品
-            </label>
-            <label class="btn btn-default">
-                <input type="radio" value="1"/>过滤商品
-            </label>
-        </div>
-        <div class="input-group col-xs-4 pull-right">
-            <span class="input-group-addon">当前第1页</span>
-            <input type="text" id="pageJump" class="form-control" placeholder="页码">
-             <span class="input-group-btn">
-                <a class="btn btn-default" href="#jumpToPage" type="button">跳转</a>
-              </span>
-        </div>
+        </div>   
+    </div>
 
-    </div>   
-</div>
-
-<div id="pluModal" class="modal fade" role="dialog" aria-labelledby="modal_pluName" aria-hidden="true">
+    <div id="pluModal" class="modal fade" role="dialog" aria-labelledby="modal_pluName" aria-hidden="true">
    
-</div>
+    </div>
 
-<div id="pluListView" class="media-list" >
+    <div id="pluListView" class="media-list" >
 
+    </div>
 </div>

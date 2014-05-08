@@ -49,10 +49,10 @@
       <publishTime>04/11/2014 08:23:13</publishTime>
     </File>
     <File Include="bin/ShopSaleForPad.dll">
-      <publishTime>05/07/2014 08:50:38</publishTime>
+      <publishTime>05/08/2014 11:04:09</publishTime>
     </File>
     <File Include="bin/ShopSaleForPad.pdb">
-      <publishTime>05/07/2014 08:50:38</publishTime>
+      <publishTime>05/08/2014 11:04:09</publishTime>
     </File>
     <File Include="bin/System.Net.Http.dll">
       <publishTime>04/11/2014 08:23:08</publishTime>
@@ -165,6 +165,12 @@
     <File Include="Content/images/Background.jpg">
       <publishTime>04/14/2014 13:03:43</publishTime>
     </File>
+    <File Include="Content/images/barcode1v.jpg">
+      <publishTime>05/08/2014 11:03:57</publishTime>
+    </File>
+    <File Include="Content/images/barcode2v.jpg">
+      <publishTime>05/08/2014 11:03:57</publishTime>
+    </File>
     <File Include="Content/images/default.jpg">
       <publishTime>04/25/2014 17:20:14</publishTime>
     </File>
@@ -247,31 +253,34 @@
       <publishTime>04/15/2014 14:19:49</publishTime>
     </File>
     <File Include="Views/Home/Logon.cshtml">
-      <publishTime>05/05/2014 15:52:26</publishTime>
+      <publishTime>05/08/2014 09:44:35</publishTime>
+    </File>
+    <File Include="Views/Sale/Invoice.cshtml">
+      <publishTime>05/08/2014 11:12:15</publishTime>
     </File>
     <File Include="Views/Sale/LogonVip.cshtml">
       <publishTime>05/04/2014 16:34:46</publishTime>
     </File>
     <File Include="Views/Sale/PluList.cshtml">
-      <publishTime>05/06/2014 17:06:43</publishTime>
+      <publishTime>05/07/2014 19:35:38</publishTime>
     </File>
     <File Include="Views/Sale/PluView.cshtml">
       <publishTime>04/28/2014 16:01:48</publishTime>
     </File>
     <File Include="Views/Sale/SaleForm.cshtml">
-      <publishTime>05/07/2014 09:34:29</publishTime>
+      <publishTime>05/08/2014 09:51:22</publishTime>
     </File>
     <File Include="Views/Sale/ShowDetail.cshtml">
-      <publishTime>05/07/2014 09:25:39</publishTime>
+      <publishTime>05/08/2014 08:56:51</publishTime>
     </File>
     <File Include="Views/Sale/ShowVip.cshtml">
-      <publishTime>05/05/2014 14:58:59</publishTime>
+      <publishTime>05/07/2014 10:15:27</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>04/11/2014 08:23:03</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>05/04/2014 17:18:05</publishTime>
+      <publishTime>05/08/2014 09:38:47</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>04/11/2014 08:23:03</publishTime>
@@ -280,7 +289,7 @@
       <publishTime>04/11/2014 08:23:03</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/05/2014 15:03:44</publishTime>
+      <publishTime>05/08/2014 09:37:54</publishTime>
     </File>
   </ItemGroup>
 </Project>
