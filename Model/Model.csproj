@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumModel.cs" />
     <Compile Include="PadSale.cs" />
     <Compile Include="PadSalePay.cs" />
     <Compile Include="PadSalePlu.cs" />

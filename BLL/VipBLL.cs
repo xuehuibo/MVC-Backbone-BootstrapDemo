@@ -22,6 +22,7 @@ namespace BLL
             {
                 using (OracleDAL dal = new OracleDAL(connectionString))
                 {
+                    dal.Open();
                     OracleParameter orgCodeParam = new OracleParameter(":OrgCode", orgCode);
                     OracleParameter noParam = new OracleParameter(":No", no);
                     StringBuilder sql = new StringBuilder(256);

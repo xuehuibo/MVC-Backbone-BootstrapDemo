@@ -1,0 +1,328 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+您 Web 项目的发布/打包进程将使用此文件。您可以通过编辑此 MSBuild 文件
+来自定义该进程的行为。若要了解与此相关的详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=208121。
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>D:\wwwroot\PadSale</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>04/11/2014 08:23:11</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.compiled">
+      <publishTime>04/29/2014 14:55:24</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.dll">
+      <publishTime>04/29/2014 14:55:24</publishTime>
+    </File>
+    <File Include="bin/BLL.dll">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/BLL.pdb">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/DAL.dll">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/DAL.pdb">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>04/11/2014 08:23:09</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>04/11/2014 08:23:09</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Mvc.FixedDisplayModes.dll">
+      <publishTime>04/11/2014 08:23:09</publishTime>
+    </File>
+    <File Include="bin/Model.dll">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/Model.pdb">
+      <publishTime>05/14/2014 16:49:36</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/QuickMark.dll">
+      <publishTime>05/08/2014 16:35:03</publishTime>
+    </File>
+    <File Include="bin/ShopSaleForPad.dll">
+      <publishTime>05/14/2014 16:49:38</publishTime>
+    </File>
+    <File Include="bin/ShopSaleForPad.pdb">
+      <publishTime>05/14/2014 16:49:38</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.dll">
+      <publishTime>04/11/2014 08:23:08</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.WebRequest.dll">
+      <publishTime>04/11/2014 08:23:08</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>04/11/2014 08:23:15</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>04/11/2014 08:23:14</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>04/11/2014 08:23:14</publishTime>
+    </File>
+    <File Include="bin/System.Web.Providers.dll">
+      <publishTime>04/11/2014 08:23:11</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>04/11/2014 08:23:11</publishTime>
+    </File>
+    <File Include="bin/ThoughtWorks.QRCode.dll">
+      <publishTime>05/08/2014 16:46:22</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>04/11/2014 08:23:11</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/EntityFramework.resources.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Net.Http.Formatting.resources.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Net.Http.resources.dll">
+      <publishTime>04/11/2014 08:23:08</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Net.Http.WebRequest.resources.dll">
+      <publishTime>04/11/2014 08:23:08</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Http.resources.dll">
+      <publishTime>04/11/2014 08:23:15</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Http.WebHost.resources.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Mvc.resources.dll">
+      <publishTime>04/11/2014 08:23:14</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Optimization.resources.dll">
+      <publishTime>04/11/2014 08:23:14</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Providers.resources.dll">
+      <publishTime>04/11/2014 08:23:11</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.Razor.resources.dll">
+      <publishTime>04/11/2014 08:23:13</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.WebPages.Deployment.resources.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.WebPages.Razor.resources.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="bin/zh-Hans/System.Web.WebPages.resources.dll">
+      <publishTime>04/11/2014 08:23:10</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-switch.css">
+      <publishTime>04/29/2014 09:34:55</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-switch.min.css">
+      <publishTime>04/29/2014 09:34:55</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-theme.css">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap-theme.min.css">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap.css">
+      <publishTime>05/12/2014 16:11:34</publishTime>
+    </File>
+    <File Include="Content/css/bootstrap.min.css">
+      <publishTime>05/12/2014 16:11:34</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.eot">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.svg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/fonts/glyphicons-halflings-regular.woff">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/Background.jpg">
+      <publishTime>04/14/2014 13:03:43</publishTime>
+    </File>
+    <File Include="Content/images/barcode1v.jpg">
+      <publishTime>05/08/2014 11:03:57</publishTime>
+    </File>
+    <File Include="Content/images/barcode2v.jpg">
+      <publishTime>05/08/2014 11:03:57</publishTime>
+    </File>
+    <File Include="Content/images/default.jpg">
+      <publishTime>04/25/2014 17:20:14</publishTime>
+    </File>
+    <File Include="Content/images/ldj.jpg">
+      <publishTime>04/14/2014 17:32:02</publishTime>
+    </File>
+    <File Include="Content/images/logo.png">
+      <publishTime>04/14/2014 14:18:22</publishTime>
+    </File>
+    <File Include="Content/images/Menu.jpg">
+      <publishTime>05/09/2014 17:05:58</publishTime>
+    </File>
+    <File Include="Content/images/MenuQuery.jpg">
+      <publishTime>05/09/2014 17:03:18</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func1.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func2-1.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func2-2.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func2.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func3.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func4.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuRow1Func5.jpg">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="Content/images/MenuSale.jpg">
+      <publishTime>05/09/2014 16:29:56</publishTime>
+    </File>
+    <File Include="Content/images/MenuSignOff.jpg">
+      <publishTime>05/09/2014 16:55:38</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>04/11/2014 08:23:03</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>04/11/2014 08:23:07</publishTime>
+    </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>04/29/2014 14:55:22</publishTime>
+    </File>
+    <File Include="Scripts/Backbone/backbone-min.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Backbone/backbone.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap-switch.js">
+      <publishTime>04/29/2014 09:35:39</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap-switch.min.js">
+      <publishTime>04/29/2014 09:35:39</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Bootstrap/bootstrap.min.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Controls.js">
+      <publishTime>04/11/2014 11:55:48</publishTime>
+    </File>
+    <File Include="Scripts/Global.js">
+      <publishTime>04/11/2014 10:33:18</publishTime>
+    </File>
+    <File Include="Scripts/JQuery/jquery-2.1.0.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/JQuery/jquery-2.1.0.min.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Tool.js">
+      <publishTime>04/11/2014 08:23:03</publishTime>
+    </File>
+    <File Include="Scripts/Underscore/underscore-min.js">
+      <publishTime>04/11/2014 08:23:02</publishTime>
+    </File>
+    <File Include="Scripts/Underscore/underscore.js">
+      <publishTime>04/11/2014 08:23:01</publishTime>
+    </File>
+    <File Include="Tools/Gma.QrCodeNet.Encoding.Net35.dll">
+      <publishTime>05/08/2014 15:50:51</publishTime>
+    </File>
+    <File Include="Tools/QuickMark.dll">
+      <publishTime>05/08/2014 16:35:03</publishTime>
+    </File>
+    <File Include="Tools/ThoughtWorks.QRCode.dll">
+      <publishTime>05/08/2014 16:46:22</publishTime>
+    </File>
+    <File Include="Views/Home/Index.cshtml">
+      <publishTime>05/14/2014 16:31:26</publishTime>
+    </File>
+    <File Include="Views/Home/Logon.cshtml">
+      <publishTime>05/08/2014 09:44:35</publishTime>
+    </File>
+    <File Include="Views/OrderArrange/OrderShow.cshtml">
+      <publishTime>05/14/2014 16:33:53</publishTime>
+    </File>
+    <File Include="Views/Sale/Invoice.cshtml">
+      <publishTime>05/12/2014 08:53:34</publishTime>
+    </File>
+    <File Include="Views/Sale/LogonVip.cshtml">
+      <publishTime>05/04/2014 16:34:46</publishTime>
+    </File>
+    <File Include="Views/Sale/PluList.cshtml">
+      <publishTime>05/14/2014 11:11:50</publishTime>
+    </File>
+    <File Include="Views/Sale/PluView.cshtml">
+      <publishTime>04/28/2014 16:01:48</publishTime>
+    </File>
+    <File Include="Views/Sale/SaleForm.cshtml">
+      <publishTime>05/14/2014 16:18:48</publishTime>
+    </File>
+    <File Include="Views/Sale/ShowDetail.cshtml">
+      <publishTime>05/09/2014 17:13:21</publishTime>
+    </File>
+    <File Include="Views/Sale/ShowTakeGoods.cshtml">
+      <publishTime>05/09/2014 15:47:42</publishTime>
+    </File>
+    <File Include="Views/Sale/ShowVip.cshtml">
+      <publishTime>05/09/2014 14:41:33</publishTime>
+    </File>
+    <File Include="Views/Shared/Error.cshtml">
+      <publishTime>04/11/2014 08:23:03</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>05/13/2014 16:03:38</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>04/11/2014 08:23:03</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>04/11/2014 08:23:03</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>05/14/2014 16:49:43</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

@@ -22,6 +22,7 @@ namespace BLL
             try{
                 using (OracleDAL dal = new OracleDAL(connectionStr))
                 {
+                    dal.Open();
                     int i;
                     DataTable dt =
                         dal.Select(" Select  UserId,UserCode,UserName,ShpId,ShpCode,ShpName "

@@ -29,59 +29,22 @@ namespace DAL
         public OracleDAL(string connectionString)
         {
             Connection = new OracleConnection(connectionString);
+        }
+
+        public void Open()
+        {
             try
             {
                 Connection.Open();
             }
-            catch (Exception ex)
+            catch 
             {
                 //数据库连接失败，抛出异常
-                throw ex;
+                throw;
             }
         }
 
         #region Query
-        /// <summary>
-        /// 查询
-        /// create by xuehuibo 2014-03-21
-        /// </summary>
-        /// <param name="sqlString">sql语句</param>
-        /// <returns></returns>
-        public DataTable Select(string sqlString,out int i)
-        {
-            try
-            {
-                //OracleTransaction tran = Connection.BeginTransaction();
-                OracleCommand cmd = new OracleCommand(sqlString, Connection);
-                //cmd.Transaction = tran;
-                OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                DataTable dataTable = new DataTable();
-                i=adapter.Fill(dataTable);
-                //tran.Commit();
-                return dataTable;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public DataTable Select(string sqlString, OracleTransaction tran,out int i)
-        {
-            try
-            {
-                OracleCommand cmd = new OracleCommand(sqlString, Connection);
-                cmd.Transaction = tran;
-                OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                DataTable dataTable = new DataTable();
-                i=adapter.Fill(dataTable);
-                return dataTable;
-            }
-            catch
-            {
-                throw;
-            }
-        }
 
         /// <summary>
         /// 查询
@@ -121,19 +84,6 @@ namespace DAL
                 DataTable dataTable = new DataTable();
                 i=adapter.Fill(dataTable);
                 return dataTable;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public OracleDataReader Select(string sqlString)
-        {
-            try
-            {
-                OracleCommand cmd = new OracleCommand(sqlString, Connection);
-                return cmd.ExecuteReader();
             }
             catch
             {
@@ -231,12 +181,14 @@ namespace DAL
 
         #endregion
 
-        public bool Save(DataTable dt, OracleTransaction tran, string selectSql, out int i)
+        public bool Save(DataTable dt, OracleTransaction tran, out int i)
         {
             try
             {
                 OracleDataAdapter oda = new OracleDataAdapter();
-                OracleCommand selectCommand = new OracleCommand(selectSql, Connection);
+                StringBuilder selectSql = new StringBuilder(256);
+                selectSql.AppendFormat(" Select * From {0} Where 1!=1 ", dt.TableName);
+                OracleCommand selectCommand = new OracleCommand(selectSql.ToString(), Connection);
                 selectCommand.Transaction = tran;
                 oda.SelectCommand = selectCommand;
                 OracleCommandBuilder ocb=new OracleCommandBuilder(oda);
@@ -251,6 +203,39 @@ namespace DAL
                 throw;
             }
         }
+
+        #region 执行语句
+        public bool Execute(string sqlString, out int i, params OracleParameter[] Params)
+        {
+            try
+            {
+                OracleCommand cmd = new OracleCommand(sqlString, Connection);
+                cmd.Parameters.AddRange(Params);
+                i = cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool Execute(string sqlString, OracleTransaction tran,out int i,params OracleParameter[] Params)
+        {
+            try
+            {
+                OracleCommand cmd = new OracleCommand(sqlString, Connection);
+                cmd.Transaction = tran;
+                cmd.Parameters.AddRange(Params);
+                i = cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        #endregion
 
         #region IDisposable 成员
 

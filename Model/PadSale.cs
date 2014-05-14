@@ -28,7 +28,7 @@ namespace Model
         /// <summary>
         /// 专柜ID
         /// </summary>
-        public string ShpId
+        public decimal ShpId
         {
             get;
             set;
@@ -55,7 +55,7 @@ namespace Model
         /// <summary>
         /// 营业员ID
         /// </summary>
-        public string ClerkId
+        public decimal ClerkId
         {
             get;
             set;
@@ -79,7 +79,7 @@ namespace Model
         /// <summary>
         /// 开票生成时间
         /// </summary>
-        public string BuildDate
+        public DateTime BuildDate
         {
             get;
             set;
@@ -116,6 +116,12 @@ namespace Model
         /// 0-未支付   1-部分支付  2-已支付
         /// </summary>
         public string PayStatus
+        {
+            get;
+            set;
+        }
+
+        public string PayStatusName
         {
             get;
             set;
@@ -168,13 +174,20 @@ namespace Model
         /// </summary>
         public string SaleSource
         {
-            get
-            {
-                return "0";
-            }
+            get;
+            set;
         }
 
-        public ICollection<PadSalePlu> SalePluList
+        public string SaleSourceName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 商品明细列表
+        /// </summary>
+        public ICollection<PadSalePlu> SalePlu
         {
             get;
             set;

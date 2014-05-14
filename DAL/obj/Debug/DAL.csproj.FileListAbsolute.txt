@@ -7,4 +7,3 @@ D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\bin\Debug\DAL.dll
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\bin\Debug\DAL.pdb
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\obj\Debug\DAL.dll
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\obj\Debug\DAL.pdb
-D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache

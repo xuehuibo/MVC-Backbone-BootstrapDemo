@@ -11,28 +11,16 @@ namespace Model
         /// 处理结果
         /// 成功-1  失败-0
         /// </summary>
-        public int Rst
-        {
-            get;
-            set;
-        }
+        public int Rst;
 
         /// <summary>
         /// 返回的消息
         /// </summary>
-        public string Msg
-        {
-            get;
-            set;
-        }
+        public string Msg;
 
         /// <summary>
         /// 结果Json
         /// </summary>
-        public string ObjJson
-        {
-            get;
-            set;
-        }
+        public string ObjJson;
     }
 }

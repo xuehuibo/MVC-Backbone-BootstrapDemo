@@ -24,6 +24,7 @@ namespace BLL
                 DataTable dt;
                 using (OracleDAL dal = new OracleDAL(ConnecionString))
                 {
+                    dal.Open();
                     OracleParameter orgCodeParam= new OracleParameter(":OrgCode", orgCode);
                     OracleParameter shpIdParam=new OracleParameter(":ShpId",shpId);
                     StringBuilder sql = new StringBuilder(256);

@@ -1,0 +1,94 @@
+﻿<script type="text/template" id="vipShow">
+    <div class="row">
+        <table class="table table-striped text-warning">
+            <thead>
+                <tr><td>基础信息</td></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>卡号：<%=VipCardNO%></td>
+                    <td>姓名：<%=VipName%></td>
+                    <td>注册时间：<%=Regdate%></td>
+                </tr>
+                <tr>
+                    <td>性别：<% if(Gender=="1"){%><%="男"%><%}%></td>
+                    <td>卡类型：<%=CardTypeName%></td>
+                    <td>出生日期：<%=Birthday%></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <table class="table table-striped text-warning">
+            <thead>
+                <tr><td>销售帮助</td></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <table class="table table-striped text-warning">
+            <thead>
+                <tr><td>客层信息收集</td></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/javascript">
+    //声明VipShowView
+    if (window.Vip.VipShowView == undefined) {
+        window.Vip.VipShowView = Backbone.View.extend({
+            template: _.template($("#vipShow").html()),
+            render: function () {
+                if (curVip == undefined) {
+                    curVip = new window.Vip.VipModel();
+                }
+                this.$el.html(this.template(curVip.toJSON(curVip)));
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    var vipList;
+    var vipShowView;
+    $(function () {
+        vipList = new window.Vip.VipList();
+        vipShowView = new window.Vip.VipShowView({
+            el: "#vipPanel"
+        });
+        vipShowView.render();
+    })
+</script>
+
+<div class="panel-body">
+    <div class="row">
+        <div class="navbar" id="pluFilter">
+            <div class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input id="no" type="text" class="form-control" placeholder="卡号或手机号"/>
+                </div>
+                <div class="form-group">
+                    <a class="btn btn-default" href="#logonVip">确定</a>
+                </div>
+            </div>   
+        </div>
+    </div>
+
+    <div id="vipPanel">
+
+    </div>
+</div>

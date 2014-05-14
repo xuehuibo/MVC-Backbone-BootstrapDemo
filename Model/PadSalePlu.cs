@@ -37,7 +37,7 @@ namespace Model
         /// <summary>
         /// 商品ID
         /// </summary>
-        public string PluId
+        public decimal PluId
         {
             get;
             set;
