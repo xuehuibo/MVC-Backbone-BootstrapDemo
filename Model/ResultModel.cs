@@ -21,6 +21,6 @@ namespace Model
         /// <summary>
         /// 结果Json
         /// </summary>
-        public string ObjJson;
+        public object Obj;
     }
 }

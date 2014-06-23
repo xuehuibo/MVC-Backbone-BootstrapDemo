@@ -39,7 +39,7 @@ namespace ShopSaleForPad.Filters
         {
             string DomainName = filterContext.HttpContext.Request.Url.Authority;
             string Module = filterContext.HttpContext.Request.Url.Segments[0];
-            UserModel user = filterContext.HttpContext.Session["User"] as UserModel;
+            UserModel user = filterContext.HttpContext.Session["LoginedUser"] as UserModel;
             string ControllerName = filterContext.RouteData.Values["controller"].ToString();
             string ActionName = filterContext.RouteData.Values["action"].ToString();
             if (filterContext.Result.GetType() == typeof(JsonResult))
@@ -48,7 +48,6 @@ namespace ShopSaleForPad.Filters
                 object Data = ((JsonResult)filterContext.Result).Data;
                 string DataType = Data.GetType().Name;
             }
-
         }
     }
 }

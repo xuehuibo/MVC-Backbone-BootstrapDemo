@@ -1,0 +1,233 @@
+﻿@section Template{
+    <script type="text/template" id="tempHandCardShow">
+        <%for(var i=0;i<handCards.length;i++){ %>
+           <div class=" col-xs-6 col-sm-4 col-md-3">
+               <%if(handCards[i].CardStatus=="0"){%>
+                <div class="alert alert-success">
+                   <button type="button" class="close" data-handCard="<%=handCards[i].HandCard%>">&times;</button>
+                    <h4><span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;<%=handCards[i].HandCard%></h4>
+                    <h4><span class="glyphicon glyphicon-barcode"></span>&nbsp;&nbsp;<%=handCards[i].BarCode%></h4>
+                    <h4><span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;<%=handCards[i].Remark%></h4>
+                </div>
+               <%}else{%>
+                <div class="alert alert-warning">
+                    <h4><span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;<%=handCards[i].HandCard%></h4>
+                    <h4><span class="glyphicon glyphicon-barcode"></span>&nbsp;&nbsp;<%=handCards[i].BarCode%></h4>
+                    <h4><span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;<%=handCards[i].Remark%></h4>
+                </div>
+               <%}%>
+            </div>
+        <%}%>
+    </script>
+
+    <script id="tempHandCardModal" type="text/template">
+    <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                   <h4 class="modal-title text-info">新增手牌</h4>
+               </div>
+               <div class="modal-body">
+                   <form role="form">
+                       <div class="form-group">
+                           <label for="handcard">手牌号</label>
+                           <input type="text" class="form-control" id="handcard" placeholder="手牌号"/>
+                       </div>
+                       <div class="form-group">
+                           <label for="barcode">条码</label>
+                           <input type="text" class="form-control" id="barcode" placeholder="条码"/>
+                       </div>
+                       <div class="form-group">
+                           <label for="remark">备注</label>
+                           <input type="text" class="form-control" id="remark" placeholder="备注"/>
+                       </div>
+                   </form>
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                   <button type="button" class="btn btn-primary" id="modal_ok">确定</button>
+               </div>
+           </div>
+       </div>
+    </script>
+}
+@section JS{
+    <script type="text/javascript">
+        if (window.HandCard == undefined) {
+            Tools.Namespace.register("window.HandCard");
+        }
+
+        //#region 声明HandCardModel
+        if (window.HandCard.HandCardModel == undefined) {
+            window.HandCard.HandCardModel = Backbone.Model.extend({
+                defaults: {
+                    "HandCard": "",
+                    "BarCode": "",
+                    "CardStatus": "0",
+                    "Remark":""
+                }
+            });
+        }
+        //#endregion
+
+        //#region 声明HandCardCollection
+        if (window.HandCard.HandCardCollection == undefined) {
+            window.HandCard.HandCardCollection = Backbone.Collection.extend({
+                model: window.HandCard.HandCardModel,
+                url:"../api/HandCardApi"
+            });
+        }
+        //#endregion
+
+        //#region 声明HandCardShowView
+        if (window.HandCard.HandCardShowView == undefined) {
+            window.HandCard.HandCardShowView = Backbone.View.extend({
+                template: _.template($("#tempHandCardShow").html()),
+                render: function (data) {
+                    this.$el.html(this.template(data));
+                },
+                refresh: function () {
+                    handCardCollection.fetch({
+                        data: {},
+                        success: function (collection, response, options) {
+                            //获取商品成功
+                            handCardShowView.render({ handCards: response });
+                        },
+                        error: function (collection, response, options) {
+                            //获取商品失败
+                            alert("获取商品信息失败！");
+                        }
+                    });
+                },
+                events: {
+                    "click button": "delHandCard"
+                },
+                delHandCard: function (e) {
+                    if (!confirm("要删除该手牌？")) {
+                        return;
+                    }
+                    $.post("/HandCard/Del",
+                        {
+                            "handCard": $(e.currentTarget).attr("data-handCard")
+                        },
+                        function (data) {
+                            if (data.Rst != 1) {
+                                alert("错误：" + data.Msg);
+                                return;
+                            }
+                            handCardShowView.refresh();
+                        });
+                }
+            });
+        }
+        //#endregion
+
+        //#region   声明HandCardModalView
+        if (window.HandCard.HandCardModalView == undefined) {
+            window.HandCard.HandCardModalView = Backbone.View.extend({
+                template: _.template($("#tempHandCardModal").html()),
+                render: function () {
+                    this.$el.html(this.template())
+                },
+                hide: function () {
+                    this.$el.modal("hide");
+                },
+                show: function () {
+                    this.render();
+                    this.$el.modal("show");
+                },
+                events: {
+                    "click #modal_ok":"click_ok"
+                },
+                click_ok: function () {
+                    if ($("#handcard").val() == "") {
+                        alert("请输入手牌号");
+                        return;
+                    }
+                    $.post("/HandCard/AddNew", 
+                        {
+                            "HandCard": $("#handcard").val(),
+                            "BarCode": $("#barcode").val(),
+                            "Remark": $("#remark").val()
+                        },
+                        function (data) {
+                            if (data.Rst != 1) {
+                                alert("错误：" + data.Msg);
+                                return;
+                            }
+                            handCardModalView.hide();
+                            handCardShowView.refresh();
+                        }
+                    );
+                }
+            });
+        }
+        //#endregion
+
+        //#region   声明router
+        if (window.HandCard.Router == undefined) {
+            window.HandCard.Router = Backbone.Router.extend({
+                routes: {
+                    "addNew": "addNew",
+                    "refresh":"refresh"
+                },
+                addNew: function () {
+                    handCardModalView.show();
+                    location.hash = "#do";
+                },
+                refresh: function () {
+                    handCardShowView.refresh();
+                    location.hash = "#do";
+                }
+            });
+        }
+        //#endregion
+    </script>
+
+    <script type="text/javascript">
+        var handCardShowView;
+        var handCardCollection;
+        var handCardModalView;
+        var router;
+        $(function () {
+            handCardShowView= new window.HandCard.HandCardShowView({
+                el: "#handCardShowPanel"
+            });
+            handCardCollection = new window.HandCard.HandCardCollection();
+            
+            handCardModalView = new window.HandCard.HandCardModalView({
+                el: "#handCardModal"
+            });
+            router = new window.HandCard.Router();
+            Backbone.history.start();
+            handCardShowView.refresh();
+        })
+    </script>
+}
+<div id="handCardModal" class="modal fade" role="dialog" aria-labelledby="modal_title" aria-hidden="true">
+
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="text-info">手牌整理</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-5">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="#addNew">
+                        <span class="glyphicon glyphicon-plus"> 增加</span>
+                    </a>
+                    <a class="btn btn-default" href="#refresh">
+                        <span class="glyphicon glyphicon-refresh"> 刷新</span>
+                     </a>
+                </div>
+
+            </div>
+        </div>
+        <hr />
+        <div class="row" id="handCardShowPanel">
+            
+        </div>
+    </div>
+</div>

@@ -26,11 +26,11 @@ namespace BLL
                     OracleParameter orgCodeParam = new OracleParameter(":OrgCode", orgCode);
                     OracleParameter noParam = new OracleParameter(":No", no);
                     StringBuilder sql = new StringBuilder(256);
-                    sql.Append(" Select A.VipCardNO,B.VipName,B.Gender,A.CardTypeCode,C.CardTypeName,B.Birthday,A.Regdate,A.Enddate,B.Mobile,B.Orgcode ");
+                    sql.Append(" Select A.CardFaceNO,B.VipName,B.Gender,A.CardTypeCode,C.CardTypeName,B.Birthday,A.Regdate,A.Enddate,B.Mobile,B.Orgcode ");
                     sql.Append("  From tIsuCard A,tIsuVipInfo B ,tbascardtype C");
                     sql.Append(" Where A.Vipinfono=B.Vipinfono And A.CardTypeCode=C.CardTypeCode");
                     //sql.Append(" And B.Orgcode=:OrgCode ");
-                    sql.Append(" And ( A.VipCardNO=:No Or B.Mobile=:No ) ");
+                    sql.Append(" And ( A.CardFaceNO=:No Or B.Mobile=:No ) ");
                     int i;
                     //DataTable dt = dal.Select(sql.ToString(), out i, orgCodeParam, noParam);
                     DataTable dt = dal.Select(sql.ToString(), out i, noParam);
@@ -41,7 +41,7 @@ namespace BLL
                         {
                             vips.Add(new VipModel()
                             {
-                                VipCardNO = Convert.ToString(row["VipCardNO"]),
+                                VipCardNO = Convert.ToString(row["CardFaceNO"]),
                                 VipName = Convert.ToString(row["VipName"]),
                                 Gender=Convert.ToString(row["Gender"]),
                                 Regdate=Convert.ToDateTime(row["Regdate"]).ToString("yyyy-MM-dd"),

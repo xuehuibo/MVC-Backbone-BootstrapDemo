@@ -2,9 +2,380 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Template{
-
+    <script type="text/template" id="tempOrderArrange">
+    <%for(var i=0;i<sale.length;i++){%>
+    @*<tr class="<%=sale[i].PayStatus==2?'success':'danger'%>" >*@
+    <%if(sale[i].IsTook==1){%>
+    <tr class="success"%>
+    <%}else if(sale[i].PayStatus==2){%>
+    <tr class="warning"%>
+    <%}else if(sale[i].PayStatus==1){%>
+    <tr class="danger"%>
+    <%}else{%>
+    <tr class="active"%>
+    <%}%>
+        <td>
+            <span class="text-warning"><%=sale[i].PadSaleNo%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].VipCardNo%></span>
+        </td>
+        <td>
+            <span class="text-warning">￥<%=sale[i].XsTotal%></span>
+        </td>
+        <td>
+            <span class="text-warning">￥<%=sale[i].PosPayTotal%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].HandCard%></span>
+        </td>
+        <td>
+            <%if(sale[i].IsTook=="1"){%>
+            <span class="text-warning">已提货</span>
+            <%}else{%>
+            <span class="text-warning"><%=sale[i].PayStatusName%></span>
+            <%}%>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].SaleSourceName%></span>
+        </td>
+        <td>
+            <a class="btn btn-default <%=sale[i].PayStatus=='0'?'':'hidden'%>" href="#cancelOrder/<%=i%>"><span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="7">
+            <%_.each(sale[i].SalePlu,function(plu){%>
+            <div class="row">
+                <div class="col-xs-6 col-xs-offset-1"> 
+                    <span class="label label-default"><%=plu.XsCount%>件</span>
+                    <span class="text-warning"><%=plu.PluCode%> - <%=plu.PluName%></span>
+                </div>
+                <div class="col-xs-4">
+                    <span class="text-muted"><%=plu.Remark%></span>
+                </div>
+            </div>
+            <%});%>
+        </td>
+    </tr>
+    <%}%>
+</script>
 }
 @section JS{
+    <script type="text/javascript">
+        if (window.OrderArrange == undefined) {
+            Tools.Namespace.register("window.OrderArrange");
+        }
 
+        //#region 声明SaleModel
+        if (window.OrderArrange.SaleModel == undefined) {
+            window.OrderArrange.SaleModel = Backbone.Model.extend({
+                defaults: {
+                    "PadSaleNo": 0,      //开票唯一标识
+                    "OrgCode": "",  //组织号
+                    "ShpId": 0,      //专柜ID
+                    "ShpCode": "",     //专柜CODE
+                    "ShpName": "",
+                    "ClerkId": 0,      //营业员ID
+                    "ClerkCode": "",     //营业员编码
+                    "ClerkName": "",
+                    "VipCardNo": "",    //会员卡号
+                    "XsTotal": 0,     //总交易金额
+                    "NeedPayTotal": 0,  //待支付金额
+                    "PosPayTotal": 0,//前台支付金额
+                    "PayStatus": "", // 0-未支付   1-部分支付  2-已支付
+                    "PayStatusName": "",
+                    "IsActive": "1",  //是否有效，为0的表示已经删除
+                    "IsTook": "0",  //是否已提货，0-未提，1-已提
+                    "SaleSource": "0",  //0-Pad开票 其他预留
+                    "SaleSourceName": "",
+                    "HandCard":"",//手牌号
+                    "SalePlu": null//商品明细
+                }
+            });
+        }
+        //#endregion
+
+        //#region   声明SaleList
+        if (window.OrderArrange.SaleList == undefined) {
+            window.OrderArrange.SaleList = Backbone.Collection.extend({
+                url: "../api/SaleApi",
+                model: window.OrderArrange.SaleModel
+            })
+        }
+        //#endregion
+
+        //#region   声明OrderArrangeView
+        if (window.OrderArrange.OrderArrangeView == undefined) {
+            window.OrderArrange.OrderArrangeView = Backbone.View.extend({
+                PayStatus: null,
+                SaleSource: null,
+                IsTook:null,
+                pageNo: 1,
+                pageSize: 10,
+                events:{
+                    "click li": "clickFilter"
+                },
+                template: _.template($("#tempOrderArrange").html()),
+                render: function (data) {
+                    $.get("/OrderArrange/GetSaleTotal", function (data) {
+                        if (data.Rst != 1) {
+                            alert(data.Msg);
+                        }
+                        else {
+                            orderArrangeView.$el.find("#invoiceCount").html(data.Obj.InvoiceCount + "笔");
+                            orderArrangeView.$el.find("#invoiceMoney").html("￥" + data.Obj.InvoiceMoney);
+
+                            orderArrangeView.$el.find("#tookGoodsCount").html(data.Obj.TookGoodsCount + "笔");
+                            orderArrangeView.$el.find("#tookGoodsMoney").html("￥" + data.Obj.TookGoodsMoney);
+
+                            orderArrangeView.$el.find("#cancelCount").html(data.Obj.CancelCount + "笔");
+                            orderArrangeView.$el.find("#cancelMoney").html("￥" + data.Obj.CancelMoney);
+                        }
+                    });
+                    this.$el.find("#orderShow").html(this.template(data));
+                },
+                clickFilter: function (e) {
+                    switch ($(e.currentTarget).attr("data-enumtype")) {
+                        case "payStatus":
+                            this.filterPayStatus($(e.currentTarget).attr("data-enumvalueid"), $(e.currentTarget).attr("data-enumvaluename"));
+                            break;
+                        case "saleSource":
+                            this.filterSaleSource($(e.currentTarget).attr("data-enumvalueid"), $(e.currentTarget).attr("data-enumvaluename"));
+                            break;
+                        case "isTook":
+                            this.filterIsTook($(e.currentTarget).attr("data-enumvalueid"), $(e.currentTarget).attr("data-enumvaluename"));
+                            break;
+                    }
+                },
+                filterPayStatus: function (id, name) {
+                    this.PayStatus = id;
+                    this.$el.find("#filterPayStatusLabel").html(name + "<span class='caret'></span>");
+                    router.navigate("#showOrder", { trigger: true });
+                },
+
+                filterSaleSource: function (id, name) {
+                    this.$el.find("#filterSaleSourceLabel").html(name + "<span class='caret'></span>");
+                    this.SaleSource = id;
+                    router.navigate("#showOrder", { trigger: true });
+                },
+                filterIsTook: function (id, name) {
+                    this.$el.find("#filterIsTookLabel").html(name + "<span class='caret'></span>");
+                    this.IsTook = id;
+                    router.navigate("#showOrder", { trigger: true });
+                }
+
+
+            });
+        }
+        //#endregion
+
+        //#region   声明router
+        if (window.OrderArrange.Router == undefined) {
+            window.OrderArrange.Router = Backbone.Router.extend({
+                routes: {
+                    "showOrder": "doShowOrder",
+                    "nextPage": "doNextPage",
+                    "prePage": "doPrePage",
+                    "fstPage": "doFstPage",
+                    "cancelOrder/:index":"doCancel"
+                },
+                doShowOrder: function () {
+                    orderList.fetch({
+                        data: {
+                            "code":null,
+                            "PayStatus": orderArrangeView.PayStatus,
+                            "SaleSource": orderArrangeView.SaleSource,
+                            "isTook": orderArrangeView.IsTook,
+                            "orderBy": "order by PadSaleNo",
+                            "pageNo": orderArrangeView.pageNo,
+                            "pageSize": orderArrangeView.pageSize,
+                        },
+                        success: function (collection, response, options) {
+                            location.hash = "#do";
+                            orderArrangeView.render({ sale: collection.toJSON(collection) });
+                        }
+                    })
+                },
+                doNextPage: function () {
+                    orderArrangeView.pageNo++;
+                    this.navigate("#showOrder", { trigger: true });
+                },
+                doPrePage: function () {
+                    orderArrangeView.pageNo--;
+                    this.navigate("#showOrder", { trigger: true });
+                },
+                doFstPage: function () {
+                    orderArrangeView.pageNo = 1;
+                    this.navigate("#showOrder", { trigger: true });
+                },
+                doCancel: function (index) {
+                    $.post("/OrderArrange/CancelOrder", { padSaleNo: orderList.at(index).get("PadSaleNo") },
+                        function (data) {
+                            if (data.Rst != 1) {
+                                alert("取消订单失败。" + data.Msg);
+                            }
+                            else {
+                                router.navigate("#showOrder", { trigger: true });
+                            }
+                        }
+                    );
+                }
+            });
+        }
+        //#endregion
+    </script>
+
+    <script type="text/javascript">
+        var orderArrangeView;
+        var orderList;
+        var router;
+        $(function () {
+            orderArrangeView = new window.OrderArrange.OrderArrangeView({
+                el: "#orderArrangeView"
+            });
+            orderList = new window.OrderArrange.SaleList();
+            router = new window.OrderArrange.Router();
+            Backbone.history.start();
+            router.navigate("#showOrder", { trigger: true });
+        })
+    </script>
 }
-<h2>OrderShow</h2>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="text-info">订单整理</h3>
+    </div>
+    <div class="panel-body " id="orderArrangeView">
+        <div class="row">
+            <h5 class="text-muted"><span class="glyphicon glyphicon-info-sign"></span>当前开票信息</h5>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2 col-xs-offset-1">
+                <label class="text-primary">开票笔数</label>
+            </div>
+            <div class="col-xs-2">
+                <b class="text-warning" id="invoiceCount"></b>
+            </div>
+            <div class="col-xs-2">
+                <label class="text-primary">开票金额</label> 
+            </div>
+            <div class="col-xs-2">
+                <b class="text-warning" id="invoiceMoney"></b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2 col-xs-offset-1">
+                <label class="text-primary">提货笔数</label> 
+            </div>
+            <div class="col-xs-2">
+                <b class="text-warning" id="tookGoodsCount"></b>
+            </div>
+            <div class="col-xs-2">
+                <label class="text-primary">提货金额</label> 
+            </div>
+            <div class="col-xs-2">
+                <b class="text-warning" id="tookGoodsMoney"></b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2 col-xs-offset-1">
+                <label class="text-primary">取消笔数</label> 
+            </div>
+            <div class="col-xs-2">
+                <b class=" text-warning" id="cancelCount"></b>
+            </div>
+            <div class="col-xs-2">
+                <label class="text-primary">取消金额</label> 
+            </div>
+            <div class="col-xs-2">
+                <b class="text-warning" id="cancelMoney"></b>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row">
+            <form class="form-inline" role="form">  
+                <div class="btn-group">
+                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="filterPayStatusLabel">
+                        付款状态<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        @foreach (var item in ViewBag.payStatus)
+                        {
+                            <li data-enumtype="payStatus" data-enumvalueid="@item.EnumValueId" data-enumvaluename="@item.EnumValueName"><a >@item.EnumValueName</a></li>
+                        }
+                        <li class="divider"></li>
+                        <li data-enumtype="payStatus" data-enumvalueid="" data-enumvaluename="付款状态"><a>取消</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="filterSaleSourceLabel">
+                        &nbsp;&nbsp;来&nbsp;源&nbsp;&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        @foreach (var item in ViewBag.saleSource)
+                        {
+                            <li data-enumtype="saleSource" data-enumvalueid="@item.EnumValueId" data-enumvaluename="@item.EnumValueName"><a>@item.EnumValueName</a></li>
+                        }
+                        <li class="divider"></li>
+                        <li data-enumtype="saleSource" data-enumvalueid="" data-enumvaluename="来源"><a>取消</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="filterIsTookLabel">
+                        提货状态<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-enumtype="isTook" data-enumvalueid="1" data-enumvaluename="已提货"><a>已提货</a></li>
+                        <li data-enumtype="isTook" data-enumvalueid="0" data-enumvaluename="未提货"><a>未提货</a></li>
+                        <li class="divider"></li>
+                        <li data-enumtype="isTook" data-enumvalueid="" data-enumvaluename="提货状态"><a>取消</a></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            <center>
+                <ul class="pagination">
+                    <li><a href="#prePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                    <li><a href="#fstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span> </a></li>
+                    <li><a href="#nextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
+                </ul>
+            </center>
+        </div>
+        <div class="row">
+            <table class="table">
+                  <thead>
+                    <tr>
+                        <th class="text-info">流水号</th>
+                        <th class="text-info">会员号</th>
+                        <th class="text-info">总金额</th>
+                        <th class="text-info">已支付</th>
+                        <th class="text-info">手牌</th>
+                        <th class="text-info">状态</th>
+                        <th class="text-info">来源</th>
+                        <th class="text-info">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="orderShow">
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <center>
+                <ul class="pagination">
+                    <li><a href="#prePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                    <li><a href="#fstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span> </a></li>
+                    <li><a href="#nextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
+                </ul>
+            </center>
+        </div>
+    </div>
+</div>
+
+

@@ -185,6 +185,15 @@ namespace Model
         }
 
         /// <summary>
+        /// 手牌号
+        /// </summary>
+        public string HandCard
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 商品明细列表
         /// </summary>
         public ICollection<PadSalePlu> SalePlu

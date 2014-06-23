@@ -7,3 +7,8 @@ D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\bin\Debug\DAL.dll
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\bin\Debug\DAL.pdb
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\obj\Debug\DAL.dll
 D:\GitWork\Web\MVC-Backbone-BootstrapDemo\DAL\obj\Debug\DAL.pdb
+D:\LSBH\02-工程域\CMP5d1\程序\海信广场\ShopSaleForPad\ShopSaleForPad\DAL\bin\Debug\DAL.dll
+D:\LSBH\02-工程域\CMP5d1\程序\海信广场\ShopSaleForPad\ShopSaleForPad\DAL\bin\Debug\DAL.pdb
+D:\LSBH\02-工程域\CMP5d1\程序\海信广场\ShopSaleForPad\ShopSaleForPad\DAL\obj\Debug\DAL.dll
+D:\LSBH\02-工程域\CMP5d1\程序\海信广场\ShopSaleForPad\ShopSaleForPad\DAL\obj\Debug\DAL.pdb
+D:\LSBH\02-工程域\CMP5d1\程序\海信广场\ShopSaleForPad\ShopSaleForPad\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache

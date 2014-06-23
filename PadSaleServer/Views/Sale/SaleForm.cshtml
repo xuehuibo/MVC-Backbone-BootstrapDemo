@@ -12,6 +12,9 @@
             <span class="text-warning"><%=sale[i].VipCardNo%></span>
         </td>
         <td>
+            <span class="text-warning"><%=sale[i].HandCard%></span>
+        </td>
+        <td>
             <span class="text-warning">￥<%=sale[i].XsTotal%></span>
         </td>
         <td>
@@ -24,7 +27,7 @@
             <span class="text-warning"><%=sale[i].SaleSourceName%></span>
         </td>
         <td>
-            <a class="btn btn-default <%=sale[i].PayStatus=='2'?'':'hidden'%>" href="#takeGoods/<%=i%>">提货</a>
+            <a class="btn btn-default <%=sale[i].PayStatus=='2'?'':'hidden'%>" href="#takeGoods/<%=i%>"><span class="glyphicon glyphicon-gift"></span> 提货</a>
         </td>
     </tr>
     <tr>
@@ -204,7 +207,6 @@
             PayStatus: null,
             SaleSource: null,
             filterStatus: false,
-            selectTr: null,
             pageNo: 1,
             pageSize: 10,
             events: {
@@ -270,23 +272,6 @@
                 this.$el.find("#filterSaleSourceLabel").html(name + "<span class='caret'></span>");
                 this.SaleSource = id;
             } ,
-
-            clickPager: function (e) {
-                if ($(e.currentTarget).attr("data-type") == "pager") {
-                    switch ($(e.currentTarget).attr("data-value")) {
-                        case "prePage":
-                            this.prePage();
-                            break;
-                        case "firstPage":
-                            this.firstPage();
-                            break;
-                        case "nextPage":
-                            this.nextPage();
-                    }
-                    router.navigate("#showTakeGoods", { trigger: true });
-                }
-                
-            }
             });
     }
     //#endregion
@@ -315,7 +300,8 @@
                     "takeGoods/:id": "doTakeGoods",
                     "takeGoodsFirstPage": "takeGoodsFirstPage",
                     "takeGoodsNextPage": "takeGoodsNextPage",
-                    "takeGoodsPrePage": "takeGoodsPrePage"
+                    "takeGoodsPrePage": "takeGoodsPrePage",
+                    "bindHandCard":"doBindHandCard"
                 },
 
                 doBeginSale: function () {
@@ -403,7 +389,7 @@
                             else {
                                 hasInvoice = true;
                                 $("#btn_invoice").addClass("disabled");
-                                invoiceResultView.render(data.ObjJson);
+                                invoiceResultView.render(data.Obj);
                             }
                         }
                     );
@@ -513,17 +499,15 @@
                             "code": modalTakeGoodsView.FilterInfo,
                             "PayStatus": modalTakeGoodsView.PayStatus,
                             "SaleSource": modalTakeGoodsView.SaleSource,
+                            "isTook": "0",
+                            "orderBy": "order by PayStatus desc, BuildDate desc",
                             "pageNo": modalTakeGoodsView.pageNo,
-                            "pageSize":modalTakeGoodsView.pageSize
+                            "pageSize": modalTakeGoodsView.pageSize,
+
                         },
                         success: function (collection, response, options) {
-                            if (response==null) {
-                                modalTakeGoodsView.pageNo--;
-                            }
-                            else {
-                                modalTakeGoodsView.render({ sale: collection.toJSON(collection) });
-                                modalTakeGoodsView.show();
-                            }
+                            modalTakeGoodsView.render({ sale: collection.toJSON(collection) });
+                            modalTakeGoodsView.show();
                         },
                         error: function (collection, response, options) {
                             modalTakeGoodsView.pageNo--;
@@ -570,6 +554,25 @@
                     else {
                         this.navigate("#showTakeGoods", { trigger: true });
                     }
+                },
+                doBindHandCard: function () {
+                    location.hash = "#do";
+                    $.post("/Sale/BindHandCard",
+                        {
+                            "saleNo": $("#padSaleNo").html(),
+                            "handCard": $("#handCard").val()
+                        },
+                        function (data) {
+                            if (data.Rst != 1) {
+                                alert("手牌绑定错误：" + data.Msg);
+                                return;
+                            }
+                            else {
+                                $("#handCard").attr("readonly", true);
+                                $("#btn_bindHandcard").addClass("disabled");
+                                alert("绑定成功！");
+                            }
+                        });
                 }
             });
         }
@@ -613,7 +616,7 @@
                    <div class="row">
                        <form class="form-inline" role="form">
                            <div class="form-group">
-                               <label class="sr-only">会员卡号或流水号</label>
+                               <label class="sr-only">会员卡、流水或手牌</label>
                                <input id="takeGoodsFilterCode" type="text" class="form-control" placeholder="会员卡号或流水号"/>
                            </div>
                            <div class="btn-group">
@@ -655,9 +658,9 @@
                    <div class="row">
                        <center>
                             <ul class="pagination">
-                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage">上一页</a></li>
-                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage">回到首页</a></li>
-                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage">下一页</a></li>
+                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span></a></li>
+                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
                             </ul>
                         </center>
                    </div>
@@ -667,6 +670,7 @@
                               <tr>
                                   <th class="text-info">流水号</th>
                                   <th class="text-info">会员号</th>
+                                  <th class="text-info">手牌号</th>
                                   <th class="text-info">总金额</th>
                                   <th class="text-info">已支付</th>
                                   <th class="text-info">状态</th>
@@ -682,15 +686,15 @@
                    <div class="row">
                        <center>
                             <ul class="pagination">
-                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage">上一页</a></li>
-                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage">回到首页</a></li>
-                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage">下一页</a></li>
+                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span></a></li>
+                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
                             </ul>
                         </center>
                    </div>
                </div>
                <div class="modal-footer">
-                   <button type="button" class="btn btn-default" data-dismiss="modal"> 关 闭 </button>
+                   <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-ban-circle"></span> 关 闭 </button>
                </div>
            </div>
        </div>   

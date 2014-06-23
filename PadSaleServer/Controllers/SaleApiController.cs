@@ -14,12 +14,12 @@ namespace ShopSaleForPad.Controllers
     public class SaleApiController : ApiController
     {
         // GET api/saleapi
-        public IEnumerable<PadSale> Get(string code, string PayStatus, string SaleSource,int pageNo,int pageSize)
+        public IEnumerable<PadSale> Get(string code, string PayStatus, string SaleSource,string isTook, string orderBy,int pageNo,int pageSize)
         {
             UserModel user = HttpContext.Current.Session["LoginedUser"] as UserModel;
             try
             {
-                return SaleBLL.GetTakeGoodsData(code, PayStatus, SaleSource,pageNo,pageSize, user, 
+                return SaleBLL.GetSaleData(code, PayStatus, SaleSource,isTook,orderBy,pageNo,pageSize, user, 
                     ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
             }
             catch

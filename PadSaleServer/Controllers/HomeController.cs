@@ -19,6 +19,13 @@ namespace ShopSaleForPad.Controllers
 
         public ViewResult Index()
         {
+            UserModel user = Session["LoginedUser"] as UserModel;
+            if (user != null)
+            {
+                ViewBag.UserCode = user.UserCode;
+                ViewBag.UserName = user.UserName;
+                ViewBag.ShopName = user.ShopName;
+            }
             ViewBag.Title = ConfigurationManager.AppSettings["Title"];
             return View();
         }

@@ -11,12 +11,19 @@
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-xs-5 col-xs-offset-1">
-                                <h5>流水号：<span  class="text-info"><%=PadSaleNo%></span></h5>
+                                <h5>流水号：<span  class="text-info" id="padSaleNo"><%=PadSaleNo%></span></h5>
                             </div>
                             <div class="col-xs-3 col-xs-offset-3">
                                 <div class="btn-group-vertical">
-                                    <a class="btn btn-default">&nbsp;短&nbsp;信&nbsp;</a>
-                                    <a class="btn btn-default hide">&nbsp;打&nbsp;印&nbsp;</a>
+                                    <a class="btn btn-default"><span class="glyphicon glyphicon-envelope"></span>&nbsp;短&nbsp;信&nbsp;</a>
+                                    <a class="btn btn-default hide"><span class="glyphicon glyphicon-print"></span>&nbsp;打&nbsp;印&nbsp;</a>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" placeholder="填入手牌号" id="handCard"/>
+                                        <span class="input-group-btn">
+                                            <a class="btn btn-default" href="#bindHandCard" id="btn_bindHandcard"><span class="glyphicon glyphicon-tag" ></span>&nbsp;手&nbsp;牌&nbsp;</a>
+                                        </span>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -55,7 +62,6 @@
         window.Sale.InvoiceResultView = Backbone.View.extend({
             template: _.template($("#tempInvoice_result").html()),
             render: function (PadSaleNo) {
-                console.info(PadSaleNo);
                 this.$el.html(this.template({ "PadSaleNo": PadSaleNo }));
             }
         });
@@ -127,7 +133,7 @@
             <p class="text-muted">@ViewBag.Invoice_Remark</p>
         </div>
         <div class="col-xs-2">
-            <a class="btn btn-default" id="btn_invoice" href="#invoice">&nbsp;开&nbsp;票&nbsp;</a>
+            <a class="btn btn-default" id="btn_invoice" href="#invoice"><span class="glyphicon glyphicon-send"></span>&nbsp;开&nbsp;票&nbsp;</a>
         </div>
     </div>
     <hr />

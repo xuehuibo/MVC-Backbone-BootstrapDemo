@@ -135,6 +135,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\HandCardApiController.cs" />
+    <Compile Include="Controllers\HandCardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrderArrangeController.cs" />
     <Compile Include="Controllers\PluApiController.cs" />
@@ -156,7 +158,7 @@
     <Content Include="Content\images\logo.png" />
     <Content Include="Content\images\Menu.jpg" />
     <Content Include="Content\images\MenuSale.jpg" />
-    <Content Include="Content\images\MenuSignOff.jpg" />
+    <Content Include="Content\images\Menu4.jpg" />
     <Content Include="Content\images\MenuQuery.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Backbone\backbone-min.js" />
@@ -225,6 +227,7 @@
     <Content Include="Views\Sale\ShowDetail.cshtml" />
     <Content Include="Views\Sale\Invoice.cshtml" />
     <Content Include="Views\OrderArrange\OrderShow.cshtml" />
+    <Content Include="Views\HandCard\HandCardShow.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

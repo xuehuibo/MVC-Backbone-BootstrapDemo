@@ -6,6 +6,8 @@ using System.Text;
 using DAL;
 using Model;
 using System.Data;
+using UInterface;
+using System.Reflection;
 
 namespace BLL
 {
@@ -108,7 +110,8 @@ namespace BLL
         /// <param name="user"></param>
         /// <param name="connectionString"></param>
         /// <returns></returns>
-        public static IEnumerable<PadSale> GetTakeGoodsData(string code, string payStatus, string saleSource,int pageNo,int pageSize, UserModel user, string connectionString)
+        public static IEnumerable<PadSale> GetSaleData(string code, string payStatus, string saleSource,string isTook, string orderBy,
+            int pageNo,int pageSize, UserModel user, string connectionString)
         {
             try
             {
@@ -127,34 +130,45 @@ namespace BLL
                     strB.Append(" (Select EnumValueId,EnumValueName From tSysEnumValue Where EnumTypeId=11020) B, ");
                     strB.Append(" (Select EnumValueId,EnumValueName From tSysEnumValue Where EnumTypeId=11021) C ");
                     strB.Append(" where A.paystatus=B.enumvalueid and A.salesource=C.enumvalueid ");
+                    int i;
                     if (!string.IsNullOrEmpty(code))
                     {
-                        strB.Append(" and ( padSaleNo=:code or vipCardNo=:code ) ");
-                        OracleParameter p0 = new OracleParameter(":code", code);
-                        ps.Add(p0);
+                        if (int.TryParse(code, out i))
+                        {
+                            strB.AppendFormat(" and ( padSaleNo={0} or vipCardNo='{0}' or HandCard='{0}') ", code); 
+                        }
+                        else
+                        {
+                            strB.AppendFormat(" and HandCard='{0}' ", code); 
+                        }
                     }
                     strB.Append(" and orgCode=:orgCode ");
                     strB.Append(" and shpId=:shpId ");
-                    strB.Append(" and IsActive='1' and IsTook='0' ");
+                    strB.Append(" and IsActive='1' ");
                     if (!string.IsNullOrEmpty(payStatus))
                     {
-                        OracleParameter p1 = new OracleParameter(":payStatus", int.Parse(payStatus));
+                        OracleParameter p1 = new OracleParameter(":payStatus", payStatus);
                         strB.Append(" and payStatus=:payStatus ");
                         ps.Add(p1);
                     }
                     if (!string.IsNullOrEmpty(saleSource))
                     {
-                        OracleParameter p2 = new OracleParameter(":saleSource", int.Parse(saleSource));
+                        OracleParameter p2 = new OracleParameter(":saleSource", saleSource);
                         strB.Append(" and saleSource=:saleSource ");
                         ps.Add(p2);
                     }
-                    strB.Append(" order by PayStatus desc, BuildDate desc ) D ) ");
+                    if (!string.IsNullOrEmpty(isTook))
+                    {
+                        OracleParameter p3 = new OracleParameter(":IsTook", isTook);
+                        strB.Append(" and IsTook=:IsTook ");
+                        ps.Add(p3);
+                    }
+                    strB.AppendFormat(" {0} ) D ) ",orderBy);
                     strB.AppendFormat(" where SerialNo between {0} and {1}",startIndex,endIndex);
-                    OracleParameter p3=new OracleParameter(":orgCode",user.OrgCode);
-                    OracleParameter p4=new OracleParameter(":shpId",user.ShopID);
-                    ps.Add(p3);
+                    OracleParameter p4=new OracleParameter(":orgCode",user.OrgCode);
+                    OracleParameter p5=new OracleParameter(":shpId",user.ShopID);
                     ps.Add(p4);
-                    int i;
+                    ps.Add(p5);
                     DataTable rst = dal.Select(strB.ToString(), out i, ps.ToArray());
                     if (i > 0)
                     {
@@ -185,6 +199,7 @@ namespace BLL
                                 IsTook = Convert.ToString(row["IsTook"]),  //是否已提货，0-未提，1-已提
                                 SaleSource = Convert.ToString(row["SaleSource"]),  //0-Pad开票 其他预留
                                 SaleSourceName = Convert.ToString(row["SaleSourceName"]),
+                                HandCard=Convert.ToString(row["HandCard"]),//手牌号
                                 SalePlu=new List<PadSalePlu>()
                             };
                             saleList.Add(sale);
@@ -303,9 +318,20 @@ namespace BLL
                     dal.Open();
                     tran = dal.Connection.BeginTransaction();
                     StringBuilder strb = new StringBuilder(256);
+
+                    strb.AppendFormat("select handcard from tpadsale where padsaleno='{0}' and orgcode='{1}'", padSaleNo, user.OrgCode);
+                    int i;
+                    OracleDataReader odr = dal.Select(strb.ToString(), tran);
+                    string handcard = null;
+                    if (odr.Read())
+                    {
+                        handcard = Convert.ToString(odr["handcard"]);//读取手牌号
+                        odr.Close();
+                    }
+                    strb.Clear();
                     strb.AppendFormat(" select IsTook ,PayStatus,IsActive from tPadSale where PadSaleNo='{0}' and OrgCode='{1}' and Shpid='{2}'",
                         padSaleNo,user.OrgCode,user.ShopID);
-                    OracleDataReader odr = dal.Select(strb.ToString(), tran);
+                    odr = dal.Select(strb.ToString(), tran);
                     string isTook, payStatus, isActive;
                     if (odr.Read())
                     {
@@ -341,8 +367,13 @@ namespace BLL
                     }
                     strb.Clear();
                     strb.AppendFormat(" update Tpadsale set IsTook='1' where PadSaleNo='{0}' ", padSaleNo);
-                    int i;
                     dal.Execute(strb.ToString(), tran, out i);
+                    if (!string.IsNullOrEmpty(handcard))
+                    {
+                        strb.Clear();
+                        strb.AppendFormat("update tpadhandcard set CardStatus='0' where handCard='{0}'", handcard);
+                        dal.Execute(strb.ToString(), tran, out i);
+                    }
                     tran.Commit();
                     msg = "流水[" + padSaleNo + "]提货成功！";
                     return true;
@@ -355,6 +386,250 @@ namespace BLL
                     }
                     throw;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 获取当前交易汇总
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static PadSaleTotal GetPadSaleTotal(UserModel user, string connectionString)
+        {
+            using (OracleDAL dal = new OracleDAL(connectionString))
+            {
+                OracleTransaction tran=null;
+                try
+                {
+                    PadSaleTotal padSaleTotal = new PadSaleTotal();
+                    dal.Open();
+                    tran = dal.Connection.BeginTransaction();
+                    StringBuilder strb = new StringBuilder(256);
+                    //开票数据
+                    strb.Append("select count(*) as InvoiceCount ,sum(NeedPayTotal) as InvoiceMoney ");
+                    strb.Append(" from tpadsale ");
+                    strb.Append(" where isactive='1' ");
+                    strb.AppendFormat(" and OrgCode={0} and ShpId={1} ",user.OrgCode,user.ShopID);
+                    OracleDataReader odr = dal.Select(strb.ToString(), tran);
+                    if (odr.Read())
+                    {
+                        padSaleTotal.InvoiceCount = Convert.ToInt16(odr["InvoiceCount"]);
+                        padSaleTotal.InvoiceMoney = Convert.IsDBNull(odr["InvoiceMoney"]) ? 0 : Convert.ToDecimal(odr["InvoiceMoney"]);
+                        odr.Close();
+                    }
+                    else
+                    {
+                        odr.Close();
+                        throw new Exception("没有数据");
+                    }
+                    //提货数据
+                    strb.Clear();
+                    strb.Append(" select count(*) as TookGoodsCount ,sum(NeedPayTotal) as TookGoodsMoney ");
+                    strb.Append(" from tpadsale ");
+                    strb.Append(" where isactive='1' and IsTook='1' ");
+                    strb.AppendFormat(" and OrgCode={0} and ShpId={1}", user.OrgCode, user.ShopID);
+                    odr = dal.Select(strb.ToString(), tran);
+                    if (odr.Read())
+                    {
+                        padSaleTotal.TookGoodsCount = Convert.ToInt16(odr["TookGoodsCount"]);
+                        padSaleTotal.TookGoodsMoney = Convert.IsDBNull(odr["TookGoodsMoney"]) ? 0 : Convert.ToDecimal(odr["TookGoodsMoney"]);
+                        odr.Close();
+                    }
+
+                    //取消数据
+                    strb.Clear();
+                    strb.Append(" select count(*) as CancelCount ,sum(NeedPayTotal) as CancelMoney ");
+                    strb.Append(" from tpadsale ");
+                    strb.Append(" where isactive='0' ");
+                    strb.AppendFormat(" and OrgCode={0} and ShpId={1} ", user.OrgCode, user.ShopID);
+                    odr = dal.Select(strb.ToString(), tran);
+                    if (odr.Read())
+                    {
+                        padSaleTotal.CancelCount = Convert.ToInt16(odr["CancelCount"]);
+                        padSaleTotal.CancelMoney = Convert.IsDBNull(odr["CancelMoney"]) ? 0 : Convert.ToDecimal(odr["CancelMoney"]);
+                        odr.Close();
+                    }
+                    tran.Commit();
+                    return padSaleTotal;
+                }
+                catch
+                {
+                    if (tran != null)
+                    {
+                        tran.Rollback();
+                    }
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 取消订单
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="padSaleNo"></param>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static bool CancelOrder(UserModel user, string padSaleNo, string connectionString)
+        {
+            using (OracleDAL dal = new OracleDAL(connectionString))
+            {
+                OracleTransaction tran = null;
+                try
+                {
+                    dal.Open();
+                    tran = dal.Connection.BeginTransaction();
+                    StringBuilder strb = new StringBuilder(256);
+                    strb.AppendFormat("select handcard from tpadsale where padsaleno='{0}' and orgcode='{1}'",padSaleNo,user.OrgCode);
+                    int i;
+                    OracleDataReader odr=dal.Select(strb.ToString(),tran);
+                    string handcard=null;
+                    if(odr.Read()){
+                        handcard=Convert.ToString(odr["handcard"]);//读取手牌号
+                        odr.Close();
+                    }
+                    strb.Clear();
+                    strb.Append(" update tpadsale set isactive='0' ");
+                    strb.AppendFormat(" where padsaleno={0} and orgcode='{1}' ", padSaleNo, user.OrgCode);
+                    if (dal.Execute(strb.ToString(), tran, out i))
+                    {
+                        if (!string.IsNullOrEmpty(handcard))
+                        {
+                            strb.Clear();
+                            strb.AppendFormat("update tpadhandcard set CardStatus='0' where handCard='{0}'",handcard);
+                            dal.Execute(strb.ToString(), tran, out i);
+                        }
+                        tran.Commit();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                catch
+                {
+                    if (tran != null)
+                    {
+                        tran.Rollback();
+                    }
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 绑定手牌
+        /// </summary>
+        /// <param name="orgcode"></param>
+        /// <param name="shpId"></param>
+        /// <param name="handCard"></param>
+        /// <param name="saleNo"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public static bool BindHandCard(string orgcode,string shpId, string handCard, string saleNo, string connectionString ,out string msg)
+        {
+            using (OracleDAL dal = new OracleDAL(connectionString))
+            {
+                OracleTransaction tran=null;
+                try
+                {
+                    dal.Open();
+                    tran = dal.Connection.BeginTransaction();
+                    StringBuilder sql = new StringBuilder(256);
+                    sql.AppendFormat("select cardstatus from tpadhandcard where handcard='{0}' ", handCard);
+                    OracleDataReader odr = dal.Select(sql.ToString(), tran);
+                    if (odr.Read())
+                    {
+                        if (Convert.ToString(odr["cardstatus"]) == "1")
+                        {
+                            msg = "该手牌已绑定其他流水！";
+                            odr.Close();
+                            tran.Rollback();
+                            return false;
+                        }
+                        odr.Close();
+                    }
+                    else
+                    {
+                        //未找到手牌
+                        odr.Close();
+                        tran.Rollback();
+                        msg = "该手牌不存在！";
+                        return false;
+                    }
+                    sql.Clear();
+                    sql.AppendFormat("update tpadsale set HandCard='{0}' where padsaleno='{1}' and orgcode='{2}' and shpid={3} "
+                        ,handCard,saleNo,orgcode,shpId);
+                    int i;
+                    dal.Execute(sql.ToString(), tran, out i);
+                    if (i > 0)
+                    {
+                        sql.Clear();
+                        sql.AppendFormat("update tpadhandcard set CardStatus='1' where handCard='{0}' ",handCard);
+                        dal.Execute(sql.ToString(), tran, out i);
+                        tran.Commit();
+                        msg = "绑定成功";
+                        return true;
+                    }
+                    else
+                    {
+                        tran.Rollback();
+                        msg = "未找到该流水";
+                        return false;
+                    }
+                }
+                catch
+                {
+                    if (tran != null)
+                    {
+                        tran.Rollback();
+                    }
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="saleNo"></param>
+        /// <param name="mobileNum"></param>
+        /// <returns></returns>
+        public static int SendSMS(string saleNo, string mobileNum,out string msg)
+        {
+            try
+            {
+                ISendSMS sms = GetSMSInstance("HsSquareSMS");
+                int i=sms.Send(saleNo, mobileNum,null);
+                msg = i == 1 ? "success" : "error";
+                return i ;
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// 获取短信平台实例
+        /// </summary>
+        /// <param name="code">短信平台类型编码</param>
+        /// <returns></returns>
+        private static ISendSMS GetSMSInstance(string code)
+        {
+            switch (code)
+            {
+                case "HsSquareSMS":
+
+                    Assembly assembly = Assembly.LoadFile("HsSquareSMS.dll");
+                    return Activator.CreateInstance(assembly.GetType("HsSquareSMS"), false) as ISendSMS;
+                default:
+                    return null;
             }
         }
     }

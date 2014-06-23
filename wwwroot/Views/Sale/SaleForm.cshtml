@@ -1,0 +1,739 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Template{
+<script type="text/template" id="tempModalTakeGoods">
+    <%for(var i=0;i<sale.length;i++){%>
+    <tr class="<%=sale[i].PayStatus==2?'success':'danger'%>" >
+        <td>
+            <span class="text-warning"><%=sale[i].PadSaleNo%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].VipCardNo%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].HandCard%></span>
+        </td>
+        <td>
+            <span class="text-warning">￥<%=sale[i].XsTotal%></span>
+        </td>
+        <td>
+            <span class="text-warning">￥<%=sale[i].PosPayTotal%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].PayStatusName%></span>
+        </td>
+        <td>
+            <span class="text-warning"><%=sale[i].SaleSourceName%></span>
+        </td>
+        <td>
+            <a class="btn btn-default <%=sale[i].PayStatus=='2'?'':'hidden'%>" href="#takeGoods/<%=i%>"><span class="glyphicon glyphicon-gift"></span> 提货</a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="7">
+            <%_.each(sale[i].SalePlu,function(plu){%>
+            <div class="row">
+                <div class="col-xs-6 col-xs-offset-1"> 
+                    <span class="label label-default"><%=plu.XsCount%>件</span>
+                    <span class="text-warning"><%=plu.PluCode%> - <%=plu.PluName%></span>
+                </div>
+                <div class="col-xs-4">
+                    <span class="text-muted"><%=plu.Remark%></span>
+                </div>
+            </div>
+            <%});%>
+        </td>
+    </tr>
+    <%}%>
+</script>
+}
+
+@section JS{
+
+<script type="text/javascript">
+    if (window.Sale == undefined) {
+        Tools.Namespace.register("window.Sale");
+        }
+          
+    if (window.Vip == undefined) {
+        Tools.Namespace.register("window.Vip");
+    }
+
+    //#region 声明MenuView
+    if (window.Sale.MenuView == undefined) {
+        window.Sale.MenuView = Backbone.View.extend({
+            events: {
+                "click li":"doClick"
+            },
+            doClick: function (e) {
+                this.$el.children().removeClass("active");
+                if (!$(e.currentTarget).hasClass("disabled")) {
+                    $(e.currentTarget).addClass("active");
+                }
+            },
+            closeTrade: function () {
+                //初始化交易界面
+                this.$el.children().addClass("disabled");
+                this.$el.children().removeClass("active");
+                this.$el.children().first("li").removeClass("disabled");
+                this.$el.children().last("li").removeClass("disabled");
+                this.$el.find("#vipStatus").html("未录入");
+                this.$el.find("#saleCounts").html("0件");
+            },
+            openTrade: function () {
+                this.$el.children().removeClass("disabled");
+                this.$el.children().removeClass("active");
+                this.$el.children().first("li").addClass("disabled");
+            },
+            setVip: function (hasVip) {
+                if (hasVip) {
+                    this.$el.find("#vipStatus").html("已录入");
+                }
+                else {
+                    this.$el.find("#vipStatus").html("未录入");
+                }
+            },
+            setSaleCount: function () {
+                var count = 0;
+                for (var i = 0; i < salePluList.length; i++) {
+                    count += salePluList.at(i).get("XsCount");
+                }
+                this.$el.find("#saleCounts").html(count + "件");
+            }
+        });
+    }
+    //#endregion
+
+    //#region 声明SaleModel
+    if (window.Sale.SaleModel == undefined) {
+        window.Sale.SaleModel = Backbone.Model.extend({
+            defaults: {
+                "PadSaleNo" :0,      //开票唯一标识
+                "OrgCode"   :"",  //组织号
+                "ShpId"     :0,      //专柜ID
+                "ShpCode"   :"",     //专柜CODE
+                "ShpName"   :"",
+                "ClerkId"   :0,      //营业员ID
+                "ClerkCode" :"",     //营业员编码
+                "ClerkName": "",
+                "VipCardNo" :"" ,    //会员卡号
+                "XsTotal"   :0,     //总交易金额
+                "NeedPayTotal": 0,  //待支付金额
+                "PosPayTotal":0,//前台支付金额
+                "PayStatus": "", // 0-未支付   1-部分支付  2-已支付
+                "PayStatusName":"",
+                "IsActive"   :"1",  //是否有效，为0的表示已经删除
+                "IsTook"    :"0",  //是否已提货，0-未提，1-已提
+                "SaleSource": "0",  //0-Pad开票 其他预留
+                "SaleSourceName": "",
+                "SalePlu":null//商品明细
+            }
+        });
+    }
+    //#endregion
+
+    //#region 声明SalePluModel
+        if (window.Sale.SalePluModel == undefined) {
+            window.Sale.SalePluModel = Backbone.Model.extend({
+                defaults: {
+                    "PadSaleNo": 0,
+                    "OrgCode": "",
+                    "LnNo": 1,
+                    "PluId": 0,
+                    "PluCode": "",
+                    "PluName": "",
+                    "Price": 0,
+                    "HyPrice": 0,
+                    "FsPrice": 0,
+                    "XsCount": 0,
+                    "XsTotal": 0,
+                    "DisCountOff": 0,
+                    "Remark": "",
+                    "PluImage":"default"
+                }
+            });
+        }
+        //#endregion
+
+    //#region 声明SalePluList
+        if (window.Sale.SalePluList == undefined) {
+            window.Sale.SalePluList = Backbone.Collection.extend({
+                model: window.Sale.SalePluModel
+            });
+        }
+    //#endregion
+
+    //#region   声明SaleList
+        if (window.Sale.SaleList == undefined) {
+            window.Sale.SaleList = Backbone.Collection.extend({
+                url:"../api/SaleApi",
+                model:window.Sale.SaleModel
+            })
+        }
+    //#endregion
+
+    //#region 声明VipModel
+    if (window.Vip.VipModel == undefined) {
+        window.Vip.VipModel = Backbone.Model.extend({
+            defaults: {
+                "VipCardNO": "",
+                "VipName": "",
+                "CardTypeCode": "",
+                "CardTypeName":"",
+                "Birthday": "",
+                "Mobile": "",
+                "Gender": "1",
+                "Regdate": "",
+                "Enddate":""
+            }
+        });
+    }
+    //#endregion
+
+    //#region 声明VipList
+    if (window.Vip.VipList == undefined) {
+        window.Vip.VipList = Backbone.Collection.extend({
+            model: window.Vip.VipModel,
+            url:"../api/VipApi"
+        });
+    }
+    //#endregion
+
+    //#region   声明ModalTakeGoodsView
+    if (window.Sale.ModalTakeGoodsView == undefined) {
+        window.Sale.ModalTakeGoodsView = Backbone.View.extend({
+            FilterInfo:null,
+            PayStatus: null,
+            SaleSource: null,
+            filterStatus: false,
+            pageNo: 1,
+            pageSize: 10,
+            events: {
+                "click li": "clickFilter",
+                "click label": "clickBtn",
+                "change #takeGoodsFilterCode": "filterInfoChange"
+            },
+            filterInfoChange:function(e){
+                this.FilterInfo = this.$el.find("#takeGoodsFilterCode").val();
+            },
+
+            clickFilter: function (e) {
+                switch ($(e.currentTarget).attr("data-enumtype")) {
+                    case "payStatus":
+                        this.filterPayStatus($(e.currentTarget).attr("data-enumvalueid"), $(e.currentTarget).attr("data-enumvaluename"));
+                        break;
+                    case "saleSource":
+                        this.filterSaleSource($(e.currentTarget).attr("data-enumvalueid"), $(e.currentTarget).attr("data-enumvaluename"));
+                        break;
+                }
+            },
+
+            clickBtn: function (e) {
+                switch ($(e.currentTarget).attr("data-value")) {
+                    case "all":
+                        //全部
+                        this.PayStatus = null;
+                        this.SaleSource = null;
+                        this.filterStatus = false;
+                        this.FilterInfo = null;
+                        this.$el.find("#takeGoodsFilterCode").val("");
+                        this.$el.find("#filterPayStatusLabel").html("付款状态<span class='caret'></span>");
+                        this.$el.find("#filterSaleSourceLabel").html("来源<span class='caret'></span>");
+                        break;
+                    case "filter":
+                        this.filterStatus = true;
+                        //过滤
+                        break;
+                }
+                router.navigate("#showTakeGoods", {trigger:true});
+            },
+
+            template: _.template($("#tempModalTakeGoods").html()),
+
+            render: function (data) {
+                this.$el.find("#modal_tBody").html(this.template(data));
+            },
+
+            show: function () {
+                this.$el.modal("show");
+            },
+
+            hide: function () {
+                this.$el.modal("hide");
+            },
+
+            filterPayStatus: function (id,name) {
+                this.PayStatus = id;
+                this.$el.find("#filterPayStatusLabel").html(name+"<span class='caret'></span>");
+            },
+
+            filterSaleSource: function (id, name) {
+                this.$el.find("#filterSaleSourceLabel").html(name + "<span class='caret'></span>");
+                this.SaleSource = id;
+            } ,
+            });
+    }
+    //#endregion
+
+    //#region 声明Router
+        if (window.Sale.Router == undefined) {
+            window.Sale.Router = Backbone.Router.extend({
+                routes: {
+                    "beginSale": "doBeginSale",
+                    "showVip":"doShowVip",
+                    "logonVip": "doLogonVip",
+                    "showInvoice":"showInvoice",
+                    "invoice": "doInvoice",
+                    "endSale": "doEndSale",
+                    "showPluList": "doShowPluList",
+                    "sale/:index": "doSale",
+                    "pluGoToPage/:page": "pluGoToPage",
+                    "pluJumpToPage": "pluDoJumpPage",
+                    "showDetail": "doShowDetail",
+                    "clearSalePlu": "doClearSalePlu",
+                    "deleteSalePlu/:index": "doDeleteSalePlu",
+                    "salePluPlus/:index": "doPlus",
+                    "salePluMinus/:index": "doMinus",
+                    "salePluChangeCount/:index&:newCount": "doChangeCount",
+                    "showTakeGoods": "doShowTakeGoods",
+                    "takeGoods/:id": "doTakeGoods",
+                    "takeGoodsFirstPage": "takeGoodsFirstPage",
+                    "takeGoodsNextPage": "takeGoodsNextPage",
+                    "takeGoodsPrePage": "takeGoodsPrePage",
+                    "bindHandCard":"doBindHandCard"
+                },
+
+                doBeginSale: function () {
+                    if (saleNow) {
+                        return;
+                    }
+                    lnNO = 1;
+                    hasInvoice = false;
+                    saleNow = true;
+                    salePluList.reset();
+                    menuView.openTrade();
+                },
+
+                doShowVip: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    $("#mainPanel").load("/Sale/ShowVip");
+                },
+
+                doLogonVip: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    vipList.fetch({
+                        data: { "no": $("#no").val() },
+                        success: function (collection, response, options) {
+                            if (collection.length == 1) {
+                                curVip = collection.at(0);
+                                vipShowView.render(curVip.toJSON(curVip), 0);
+                                menuView.setVip(true);
+                            }
+                            else if (collection.length > 1) {
+
+                            }
+                            else if (collection.length == 0) {
+                                alert("未找到该会员信息！");
+                            }
+                            location.hash = "#";
+                        }
+                    });
+                    $("#no").val("");
+                       
+                },
+
+                doShowPluList: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    $("#mainPanel").load("/Sale/PluList");
+                },
+
+                showInvoice: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    $("#mainPanel").load("/Sale/invoice");
+                },
+
+                doInvoice: function () {
+                    if (salePluList.length == 0) {
+                        alert("销售清单中没有商品，不允许开票");
+                        return;
+                    }
+
+                    var sale = new window.Sale.SaleModel({
+                        "VipCardNo": curVip != undefined ? curVip.get("VipCardNO") : "",    //会员卡号
+                        "XsTotal": invoice_xsTotal,     //总交易金额
+                        "NeedPayTotal": invoice_xsTotal,  //待支付金额
+                        "PayStatus": "0", // 0-未支付   1-部分支付  2-已支付
+                        "IsActive": "1",  //是否有效，为0的表示已经删除
+                        "IsTook": "0",  //是否已提货，0-未提，1-已提
+                        "SaleSource": "0",  //0-Pad开票 其他预留
+                        "SalePlu":salePluList.toJSON(salePluList)
+                    });
+                    $.post("/Sale/DoInvoice",
+                        {
+                            "sale":  JSON.stringify(sale.toJSON(sale))
+                        },
+                        function (data, status)
+                        {
+                            if (data.Rst == 0) {
+                                alert("开票失败！错误信息：" + data.Msg);
+                            }
+                            else {
+                                hasInvoice = true;
+                                $("#btn_invoice").addClass("disabled");
+                                invoiceResultView.render(data.Obj);
+                            }
+                        }
+                    );
+                },
+
+                doEndSale: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    curVip = null;
+                    hasInvoice = false;
+                    salePluList.reset();
+                    saleNow = false;
+                    menuView.closeTrade();
+                    $("#mainPanel").html("");
+                },
+
+                doSale: function (id) {
+                    var plu = pluList.at(id);
+                    pluModalView.show(plu);
+                    location.hash = "#do";
+                },
+
+                pluGoToPage: function (page) {
+                    pluView.goToPage(page);
+                },
+
+                pluDoJumpPage: function () {
+                    var page = $("#pageJump").val();
+                    $("#pageJump").val(null);
+                    if (isNaN(page)) {
+                        alert("请输入数字！");
+                    }
+                    else {
+                        if (page > pluView.maxPage) {
+                            page = pluView.maxPage;
+                        }
+                        if (page < 1) {
+                            page = 1;
+                        }
+                        this.navigate("pluGoToPage/" + page, { trigger: true });
+                    }
+                },
+
+                doShowDetail: function () {
+                    if (!saleNow) {
+                        return;
+                    }
+                    $("#mainPanel").load("/Sale/ShowDetail");
+                },
+
+                doClearSalePlu: function () {
+                    salePluList.reset();
+                    saleDetailView.render();
+                    menuView.setSaleCount();
+                },
+
+                doDeleteSalePlu: function (index) {
+                    salePluList.remove(salePluList.at(index));
+                    menuView.setSaleCount();
+                    saleDetailView.render();
+                },
+
+                doPlus: function (index) {
+                    var salePlu = salePluList.at(index);
+                    var count = salePlu.get("XsCount")+1;
+                    var fsPrice=salePlu.get("FsPrice");
+                    salePlu.set({ "XsCount": count, "XsTotal": Math.round(fsPrice * count * 10000) / 10000 });
+                    menuView.setSaleCount();
+                    saleDetailView.render();
+                    location.hash = "#do";
+                },
+
+                doMinus: function (index) {
+                    var salePlu = salePluList.at(index);
+                    var count = salePlu.get("XsCount") - 1;
+                    if (count == 0) {
+                        console.info("delete");
+                        this.doDeleteSalePlu(index);
+                        return;
+                    }
+                    var fsPrice = salePlu.get("FsPrice");
+                    salePlu.set({ "XsCount": count, "XsTotal": Math.round(fsPrice * count * 10000) / 10000 });
+                    menuView.setSaleCount();
+                    saleDetailView.render();
+                    location.hash = "#do";
+                },
+
+                doChangeCount: function (index,newCount) {
+                    var salePlu = salePluList.at(index);
+                    newCount = parseInt(newCount);
+                    var fsPrice = salePlu.get("FsPrice");
+                    if (newCount == 0) {
+                        this.doDeleteSalePlu(index);
+                        return;
+                    }
+                    salePlu.set({ "XsCount": newCount, "XsTotal": Math.round(fsPrice * newCount * 10000) / 10000 });
+                    menuView.setSaleCount();
+                    saleDetailView.render();
+                    location.hash = "#do";
+                },
+
+                doShowTakeGoods: function () {
+                    location.hash = "do";
+                    takeGoodsList.fetch({
+                        data: {
+                            "code": modalTakeGoodsView.FilterInfo,
+                            "PayStatus": modalTakeGoodsView.PayStatus,
+                            "SaleSource": modalTakeGoodsView.SaleSource,
+                            "isTook": "0",
+                            "orderBy": "order by PayStatus desc, BuildDate desc",
+                            "pageNo": modalTakeGoodsView.pageNo,
+                            "pageSize": modalTakeGoodsView.pageSize,
+
+                        },
+                        success: function (collection, response, options) {
+                            modalTakeGoodsView.render({ sale: collection.toJSON(collection) });
+                            modalTakeGoodsView.show();
+                        },
+                        error: function (collection, response, options) {
+                            modalTakeGoodsView.pageNo--;
+                            alert("获取提货信息失败！");
+                        }
+                    })
+                },
+
+                doTakeGoods: function (index) {
+                    location.hash = "#do";
+                    var takeGoods = takeGoodsList.at(index);
+                    console.info(takeGoods);
+                    $.post("/Sale/DoTakeGoods",  
+                        { padSaleNo: takeGoods.get("PadSaleNo") } ,
+                        function (data, status) {
+                            if (data.Rst != 1) {
+                                alert("提货失败！" + data.Msg);
+                                return;
+                            }
+                            else {
+                                alert(data.Msg);
+                                takeGoods.set({ "IsTook": "1" });
+                                router.navigate("#showTakeGoods", {trigger:true});
+                            }
+                        }
+                    );
+                },
+
+                takeGoodsFirstPage: function () {
+                    modalTakeGoodsView.pageNo = 1;
+                    this.navigate("#showTakeGoods", { trigger: true });
+                },
+
+                takeGoodsNextPage: function () {
+                    modalTakeGoodsView.pageNo++;
+                    this.navigate("#showTakeGoods", { trigger: true });
+                },
+
+                takeGoodsPrePage: function () {
+                    modalTakeGoodsView.pageNo--;
+                    if (modalTakeGoodsView.pageNo == 0) {
+                        modalTakeGoodsView.pageNo = 1;
+                    }
+                    else {
+                        this.navigate("#showTakeGoods", { trigger: true });
+                    }
+                },
+                doBindHandCard: function () {
+                    location.hash = "#do";
+                    $.post("/Sale/BindHandCard",
+                        {
+                            "saleNo": $("#padSaleNo").html(),
+                            "handCard": $("#handCard").val()
+                        },
+                        function (data) {
+                            if (data.Rst != 1) {
+                                alert("手牌绑定错误：" + data.Msg);
+                                return;
+                            }
+                            else {
+                                $("#handCard").attr("readonly", true);
+                                $("#btn_bindHandcard").addClass("disabled");
+                                alert("绑定成功！");
+                            }
+                        });
+                }
+            });
+        }
+        //#endregion
+
+</script>
+
+<script type="text/javascript">
+    var router;
+    var menuView;
+    var salePluList;
+    var lnNO;
+    var curVip;
+    var saleNow = false;
+    var hasInvoice = false;
+    var modalTakeGoodsView;
+    var takeGoodsList;
+    $(function () {
+        salePluList = new window.Sale.SalePluList();
+        takeGoodsList = new window.Sale.SaleList();
+        menuView = new window.Sale.MenuView({
+            el: "#menuList"
+        });
+        menuView.closeTrade();
+        modalTakeGoodsView = new window.Sale.ModalTakeGoodsView({
+            el: "#modal_takeGoods"
+        });
+        router = new window.Sale.Router();
+        Backbone.history.start();
+    })
+</script>
+}
+<div id="modal_takeGoods" class="modal fade" role="dialog"aria-labelledby="modal_title" aria-hidden="true">
+    <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                   <h4 class="modal-title text-info" id="modal_title">提货列表</h4>
+               </div>
+               <div class="modal-body">
+                   <div class="row">
+                       <form class="form-inline" role="form">
+                           <div class="form-group">
+                               <label class="sr-only">会员卡、流水或手牌</label>
+                               <input id="takeGoodsFilterCode" type="text" class="form-control" placeholder="会员卡号或流水号"/>
+                           </div>
+                           <div class="btn-group">
+                               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="filterPayStatusLabel">
+                                   付款状态<span class="caret"></span>
+                               </a>
+                               <ul class="dropdown-menu" role="menu">
+                                   @foreach (var item in ViewBag.payStatus)
+                                   {
+                                       <li data-enumtype="payStatus" data-enumvalueid="@item.EnumValueId" data-enumvaluename="@item.EnumValueName"><a >@item.EnumValueName</a></li>
+                                   }
+                                   <li class="divider"></li>
+                                   <li data-enumtype="payStatus" data-enumvalueid="" data-enumvaluename="付款状态"><a>取消</a></li>
+                               </ul>
+                           </div>
+                           <div class="btn-group">
+                               <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="filterSaleSourceLabel">
+                                   &nbsp;&nbsp;来&nbsp;源&nbsp;&nbsp;<span class="caret"></span>
+                               </a>
+                               <ul class="dropdown-menu" role="menu">
+                                   @foreach (var item in ViewBag.saleSource)
+                                   {
+                                       <li data-enumtype="saleSource" data-enumvalueid="@item.EnumValueId" data-enumvaluename="@item.EnumValueName"><a>@item.EnumValueName</a></li>
+                                   }
+                                   <li class="divider"></li>
+                                   <li data-enumtype="saleSource" data-enumvalueid="" data-enumvaluename="来源"><a>取消</a></li>
+                               </ul>
+                           </div>
+                           <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default active" data-value="all">
+                                    <input type="radio"/>全部
+                                </label>
+                                <label class="btn btn-default" data-value="filter">
+                                    <input type="radio"/>过滤
+                                </label>
+                            </div>
+                       </form>
+                   </div>
+                   <div class="row">
+                       <center>
+                            <ul class="pagination">
+                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span></a></li>
+                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
+                            </ul>
+                        </center>
+                   </div>
+                   <div class="row">
+                        <table class="table">
+                          <thead>
+                              <tr>
+                                  <th class="text-info">流水号</th>
+                                  <th class="text-info">会员号</th>
+                                  <th class="text-info">手牌号</th>
+                                  <th class="text-info">总金额</th>
+                                  <th class="text-info">已支付</th>
+                                  <th class="text-info">状态</th>
+                                  <th class="text-info">来源</th>
+                                  <th class="text-info">操作</th>
+                              </tr>
+                          </thead>
+                          <tbody id="modal_tBody">
+
+                          </tbody>
+                      </table>
+                   </div>
+                   <div class="row">
+                       <center>
+                            <ul class="pagination">
+                              <li><a href="#takeGoodsPrePage" data-type="pager" data-value="prePage"><span class=" glyphicon glyphicon-arrow-left"></span></a></li>
+                                <li><a href="#takeGoodsFirstPage" data-type="pager" data-value="firstPage"><span class="glyphicon glyphicon-home"></span></a></li>
+                              <li><a href="#takeGoodsNextPage" data-type="pager" data-value="nextPage"><span class="glyphicon glyphicon-arrow-right"></span></a></li>
+                            </ul>
+                        </center>
+                   </div>
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-ban-circle"></span> 关 闭 </button>
+               </div>
+           </div>
+       </div>   
+</div>
+
+<div class="row">
+    <div class="col-xs-2">
+        <div class="panel affix">
+            <ul id="menuList" class="nav nav-pills nav-stacked">
+            @*此容器中显示菜单*@
+                <li>
+                    <a href="#beginSale">开始交易</a>
+                </li>
+                <li>
+                     <a href="#showVip">会员信息<span class="badge" id="vipStatus">未登录</span></a>
+                </li>
+               <li >
+                    <a href="#showPluList">添加商品</a>
+               </li>
+                <li>
+                    <a href="#showDetail">销售清单<span class="badge" id="saleCounts">0件</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                </li>
+                <li>
+                     <a href="#showInvoice">开票</a>
+                </li>
+                <li>
+                    <a href="#endSale">结束交易</a>
+                </li> 
+                <li>
+                    <a href="#showTakeGoods" class="text-success">提货</a>
+                </li> 
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-xs-10">
+        <div id="mainPanel" class="panel panel-info">
+       @*在此容器中显示内容*@
+        </div>  
+    </div>
+</div>
+

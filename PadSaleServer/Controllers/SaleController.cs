@@ -22,6 +22,11 @@ namespace ShopSaleForPad.Controllers
         // GET: /Sale/
         public ViewResult SaleForm()
         {
+            UserModel user = Session["LoginedUser"] as UserModel;
+            ViewBag.UserCode = user.UserCode;
+            ViewBag.UserName = user.UserName;
+            ViewBag.ShopName = user.ShopName;
+
             ViewBag.Title = ConfigurationManager.AppSettings["Title"];
             try
             {
@@ -111,11 +116,10 @@ namespace ShopSaleForPad.Controllers
             }
 
             PadSale padSale = JsonConvert.DeserializeObject<PadSale>(sale);
-            //PadSalePlu[] padSalePlus = JsonConvert.DeserializeObject<PadSalePlu[]>(salePlus);
 
             try
             {
-                rst.ObjJson=SaleBLL.DoInvoice(padSale, user, ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
+                rst.Obj=SaleBLL.DoInvoice(padSale, user, ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
                 rst.Rst = 1;
                 rst.Msg = "ok";
                 return Json(rst);
@@ -137,9 +141,45 @@ namespace ShopSaleForPad.Controllers
         {
             UserModel user = Session["LoginedUser"] as UserModel;
             ResultModel rst = new ResultModel();
+            if (user == null)
+            {
+                rst.Rst = 0;
+                rst.Msg = "用户登录失效";
+                return Json(rst);
+            }
             try
             {
                 rst.Rst = SaleBLL.TakeGoods(padSaleNo, user,ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString, out rst.Msg) ? 1 : 0;
+                return Json(rst, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                rst.Rst = -1;
+                rst.Msg = ex.Message;
+                return Json(rst, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        /// <summary>
+        /// 流水绑定手牌号
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult BindHandCard(string saleNo,string handCard)
+        {
+            UserModel user = Session["LoginedUser"] as UserModel;
+            ResultModel rst = new ResultModel();
+            if (user == null)
+            {
+                rst.Rst = 0;
+                rst.Msg = "用户登录失效";
+                return Json(rst);
+            }
+            try
+            {
+                rst.Rst = SaleBLL.BindHandCard(user.OrgCode, user.ShopID, handCard, saleNo,
+                    ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString, out rst.Msg) ? 1 : 0;
                 return Json(rst);
             }
             catch (Exception ex)
@@ -149,6 +189,38 @@ namespace ShopSaleForPad.Controllers
                 return Json(rst);
             }
         }
+
+        /// <summary>
+        /// 发送短信
+        /// </summary>
+        /// <param name="saleNo"></param>
+        /// <param name="mobileNum"></param>
+        /// <returns></returns>
+        public JsonResult SendSMS(string saleNo,string mobileNum)
+        {
+            UserModel user = Session["LoginedUser"] as UserModel;
+            ResultModel rst = new ResultModel();
+            if (user == null)
+            {
+                rst.Rst = 0;
+                rst.Msg = "用户登录失效";
+                return Json(rst);
+            }
+            rst = new ResultModel();
+            rst.Rst = SaleBLL.SendSMS(saleNo, mobileNum, out rst.Msg);
+            return Json(rst);
+        }
+
+        /// <summary>
+        /// 发送微信
+        /// </summary>
+        /// <param name="saleNo"></param>
+        /// <returns></returns>
+        public JsonResult SendMicroMessage(string saleNo)
+        {
+            return null;
+        }
+
 
     }
 }
