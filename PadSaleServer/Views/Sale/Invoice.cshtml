@@ -10,17 +10,22 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-xs-5 col-xs-offset-1">
+                            <div class="col-xs-4 col-xs-offset-1">
                                 <h5>流水号：<span  class="text-info" id="padSaleNo"><%=PadSaleNo%></span></h5>
                             </div>
-                            <div class="col-xs-3 col-xs-offset-3">
+                            <div class="col-xs-5 col-xs-offset-2">
                                 <div class="btn-group-vertical">
-                                    <a class="btn btn-default"><span class="glyphicon glyphicon-envelope"></span>&nbsp;短&nbsp;信&nbsp;</a>
+                                    <div class="input-group">
+                                        <input class="form-control" type="text" placeholder="填入手机号" id="mobile"/>
+                                        <span class="input-group-btn">
+                                            <a class="btn btn-default" id="smsBtn" href="#sendSMS"><span class="glyphicon glyphicon-tag" id="smsBtnSpan">&nbsp;短&nbsp;信&nbsp;</span></a>
+                                        </span>
+                                    </div>
                                     <a class="btn btn-default hide"><span class="glyphicon glyphicon-print"></span>&nbsp;打&nbsp;印&nbsp;</a>
                                     <div class="input-group">
                                         <input class="form-control" type="text" placeholder="填入手牌号" id="handCard"/>
                                         <span class="input-group-btn">
-                                            <a class="btn btn-default" href="#bindHandCard" id="btn_bindHandcard"><span class="glyphicon glyphicon-tag" ></span>&nbsp;手&nbsp;牌&nbsp;</a>
+                                            <a class="btn btn-default" href="#bindHandCard" id="btn_bindHandcard"><span class="glyphicon glyphicon-tag" >&nbsp;手&nbsp;牌&nbsp;</span></a>
                                         </span>
                                     </div>
                                     

@@ -301,7 +301,8 @@
                     "takeGoodsFirstPage": "takeGoodsFirstPage",
                     "takeGoodsNextPage": "takeGoodsNextPage",
                     "takeGoodsPrePage": "takeGoodsPrePage",
-                    "bindHandCard":"doBindHandCard"
+                    "bindHandCard": "doBindHandCard",
+                    "sendSMS":"sendSMS"
                 },
 
                 doBeginSale: function () {
@@ -390,6 +391,7 @@
                                 hasInvoice = true;
                                 $("#btn_invoice").addClass("disabled");
                                 invoiceResultView.render(data.Obj);
+                                $("#mobile").val(curVip.get("Mobile"));
                             }
                         }
                     );
@@ -573,6 +575,31 @@
                                 alert("绑定成功！");
                             }
                         });
+                },
+                sendSMS: function () {
+                    if ($("#mobile").val() == "") {
+                        alert("请输入手机号");
+                        return;
+                    }
+                    location.hash = "#do";
+                    $.post("/SMS/SendSMS",
+                        {
+                            saleNo: $("#padSaleNo").html(),
+                            mobile: $("#mobile").val()
+                        },
+                        function (data,status) {
+                            //
+                            alert(data.Msg);
+                            if (data.Rst == 1) {
+                                $("#smsBtn").addClass("disabled");
+                                $("#smsBtnSpan").html("30秒后重发");
+                                setTimeout(function () {
+                                    $("#smsBtn").removeClass("disabled");
+                                    $("#smsBtnSpan").html("&nbsp;短&nbsp;信&nbsp;");
+                                }, 30000);
+                            }
+                        }
+                    )
                 }
             });
         }

@@ -56,10 +56,6 @@
       <Project>{5b48dcf6-7cc8-453d-8fe1-dd72fcd19b73}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UInterface\UInterface.csproj">
-      <Project>{5621324c-0a88-4ffd-8d25-457182f3327f}</Project>
-      <Name>UInterface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

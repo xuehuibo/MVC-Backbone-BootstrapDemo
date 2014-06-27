@@ -190,37 +190,5 @@ namespace ShopSaleForPad.Controllers
             }
         }
 
-        /// <summary>
-        /// 发送短信
-        /// </summary>
-        /// <param name="saleNo"></param>
-        /// <param name="mobileNum"></param>
-        /// <returns></returns>
-        public JsonResult SendSMS(string saleNo,string mobileNum)
-        {
-            UserModel user = Session["LoginedUser"] as UserModel;
-            ResultModel rst = new ResultModel();
-            if (user == null)
-            {
-                rst.Rst = 0;
-                rst.Msg = "用户登录失效";
-                return Json(rst);
-            }
-            rst = new ResultModel();
-            rst.Rst = SaleBLL.SendSMS(saleNo, mobileNum, out rst.Msg);
-            return Json(rst);
-        }
-
-        /// <summary>
-        /// 发送微信
-        /// </summary>
-        /// <param name="saleNo"></param>
-        /// <returns></returns>
-        public JsonResult SendMicroMessage(string saleNo)
-        {
-            return null;
-        }
-
-
     }
 }

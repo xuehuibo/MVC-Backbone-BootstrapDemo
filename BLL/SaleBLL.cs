@@ -6,8 +6,6 @@ using System.Text;
 using DAL;
 using Model;
 using System.Data;
-using UInterface;
-using System.Reflection;
 
 namespace BLL
 {
@@ -239,6 +237,82 @@ namespace BLL
             }
         }
 
+        /// <summary>
+        /// 获取指定流水信息
+        /// </summary>
+        /// <param name="PadSaleNo"></param>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static PadSale GetSaleData(string PadSaleNo,UserModel user,string connectionString)
+        {
+            try
+            {
+                using (OracleDAL dal = new OracleDAL(connectionString))
+                {
+                    dal.Open();
+                    StringBuilder strB = new StringBuilder(256);
+                    strB.AppendFormat("  select * from tPadSale where PadSaleNo= '{0}'", PadSaleNo);
+                    int i;
+                    OracleDataReader odr = dal.Select(strB.ToString());
+                    PadSale padSale=null;
+                    if (odr.Read())
+                    {
+                        padSale = new PadSale()
+                        {
+                            PadSaleNo = Convert.ToDecimal(odr["PadSaleNo"]),      //开票唯一标识
+                            BuildDate=Convert.ToDateTime(odr["BuildDate"]),
+                            OrgCode = Convert.ToString(odr["OrgCode"]),  //组织号
+                            ShpId = Convert.ToDecimal(odr["ShpId"]),      //专柜ID
+                            ShpCode = Convert.ToString(odr["ShpCode"]),     //专柜CODE
+                            ShpName = Convert.ToString(odr["ShpName"]),
+                            ClerkId = Convert.ToDecimal(odr["ClerkId"]),      //营业员ID
+                            ClerkCode = Convert.ToString(odr["ClerkCode"]),     //营业员编码
+                            ClerkName = Convert.ToString(odr["ClerkName"]),
+                            VipCardNo = Convert.ToString(odr["VipCardNo"]),    //会员卡号
+                            XsTotal = Convert.ToDecimal(odr["XsTotal"]),     //总交易金额
+                            NeedPayTotal = Convert.ToDecimal(odr["NeedPayTotal"]),  //待支付金额
+                            PayStatus = Convert.ToString(odr["PayStatus"]), // 0-未支付   1-部分支付  2-已支付
+                            PosPayTotal = Convert.ToDecimal(odr["PosPayTotal"]),
+                            IsActive = Convert.ToString(odr["IsActive"]),  //是否有效，为0的表示已经删除
+                            IsTook = Convert.ToString(odr["IsTook"]),  //是否已提货，0-未提，1-已提
+                            SaleSource = Convert.ToString(odr["SaleSource"]),  //0-Pad开票 其他预留
+                            HandCard = Convert.ToString(odr["HandCard"]),//手牌号
+                            SalePlu = new List<PadSalePlu>()
+                        };
+                        strB.Clear();
+                        strB.AppendFormat("Select * from Tpadsaleplu where padSaleNo='{0}' and orgCode={1} order by LnNo",
+                            PadSaleNo,
+                            user.OrgCode);
+                        DataTable plu = dal.Select(strB.ToString(), out i);
+                        foreach (DataRow pluRow in plu.Rows)
+                        {
+                            padSale.SalePlu.Add(new PadSalePlu()
+                            {
+                                PadSaleNo = Convert.ToDecimal(pluRow["PadSaleNo"]),
+                                OrgCode = Convert.ToString(pluRow["OrgCode"]),
+                                LnNo = Convert.ToInt16(pluRow["LnNo"]),
+                                PluId = Convert.ToDecimal(pluRow["PluId"]),
+                                PluCode = Convert.ToString(pluRow["PluCode"]),
+                                PluName = Convert.ToString(pluRow["PluName"]),
+                                Price = Convert.ToDecimal(pluRow["Price"]),
+                                HyPrice = Convert.ToDecimal(pluRow["HyPrice"]),
+                                FsPrice = Convert.ToDecimal(pluRow["FsPrice"]),
+                                XsCount = Convert.ToDecimal(pluRow["XsCount"]),
+                                XsTotal = Convert.ToDecimal(pluRow["XsTotal"]),
+                                DisCountOff = Convert.ToDecimal(pluRow["DisCountOff"]),
+                                Remark = Convert.ToString(pluRow["Remark"])
+                            });
+                        }
+                    }
+                    odr.Close();
+                    return padSale;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
         /// <summary>
         /// 获取支付状态枚举
         /// </summary>
@@ -590,46 +664,6 @@ namespace BLL
                     }
                     throw;
                 }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="saleNo"></param>
-        /// <param name="mobileNum"></param>
-        /// <returns></returns>
-        public static int SendSMS(string saleNo, string mobileNum,out string msg)
-        {
-            try
-            {
-                ISendSMS sms = GetSMSInstance("HsSquareSMS");
-                int i=sms.Send(saleNo, mobileNum,null);
-                msg = i == 1 ? "success" : "error";
-                return i ;
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// 获取短信平台实例
-        /// </summary>
-        /// <param name="code">短信平台类型编码</param>
-        /// <returns></returns>
-        private static ISendSMS GetSMSInstance(string code)
-        {
-            switch (code)
-            {
-                case "HsSquareSMS":
-
-                    Assembly assembly = Assembly.LoadFile("HsSquareSMS.dll");
-                    return Activator.CreateInstance(assembly.GetType("HsSquareSMS"), false) as ISendSMS;
-                default:
-                    return null;
             }
         }
     }

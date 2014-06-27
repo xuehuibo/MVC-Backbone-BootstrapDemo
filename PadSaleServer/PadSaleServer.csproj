@@ -30,6 +30,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PublishDatabases>false</PublishDatabases>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -142,6 +143,7 @@
     <Compile Include="Controllers\PluApiController.cs" />
     <Compile Include="Controllers\SaleApiController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
+    <Compile Include="Controllers\SMSController.cs" />
     <Compile Include="Controllers\VipApiController.cs" />
     <Compile Include="Filters\ActionFilter.cs" />
     <Compile Include="Attribute\AuthorizationAttribute.cs" />
@@ -216,6 +218,10 @@
       <Project>{5b48dcf6-7cc8-453d-8fe1-dd72fcd19b73}</Project>
       <Name>Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YeionSMS\YeionSMS.csproj">
+      <Project>{ed87be18-9d01-4411-8479-700dbe5a7ba6}</Project>
+      <Name>YeionSMS</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Sale\SaleForm.cshtml" />
@@ -243,13 +249,13 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>8021</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/MVC_Backbone_Bootstrap</IISUrl>
+          <IISUrl>http://localhost:8021/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>True</UseCustomServer>
+          <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>http://localhost:8081</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
