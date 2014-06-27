@@ -11,7 +11,7 @@
                     <td>注册时间：<%=Regdate%></td>
                 </tr>
                 <tr>
-                    <td>性别：<% if(Gender=="1"){%><%="男"%><%}%></td>
+                    <td>性别：<%=Gender=='1'?'女':'男'%></td>
                     <td>卡类型：<%=CardTypeName%></td>
                     <td>出生日期：<%=Birthday%></td>
                 </tr>
