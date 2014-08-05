@@ -98,6 +98,21 @@ namespace ShopSaleForPad.Controllers
         }
 
         /// <summary>
+        /// 获取商品图片
+        /// </summary>
+        /// <param name="pluID"></param>
+        /// <returns></returns>
+        public FileResult PluImage(decimal pluID)
+        {                  
+            byte[] img=PluBLL.GetPluImage(pluID, ConfigurationManager.ConnectionStrings["CMP_DBConnection"].ConnectionString);
+            if (img == null)
+            {
+                return File("/Content/images/default.jpg", "image/jpeg");
+            }
+            return new FileContentResult(img, "image/jpeg");
+        }
+
+        /// <summary>
         /// 开票
         /// </summary>
         /// <param name="sale"></param>

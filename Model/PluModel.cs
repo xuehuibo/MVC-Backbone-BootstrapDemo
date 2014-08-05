@@ -87,24 +87,13 @@ namespace Model
             set;
         }
 
-        private string pluImage;
-        public string PluImage
+        /// <summary>
+        /// 商品说明
+        /// </summary>
+        public string Brief
         {
-            set
-            {
-                pluImage = value;
-            }
-            get
-            {
-                if (string.IsNullOrEmpty(pluImage))
-                {
-                    return "default";
-                }
-                else
-                {
-                    return pluImage;
-                }
-            }
+            get;
+            set;
         }
     }
 }
